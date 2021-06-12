@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\DB;
 /**
  * @mixin Model
  */
-trait BatchUpdatable
+trait MassUpdatable
 {
-    public function scopeBatchUpdate(Builder $query, array $values, array | string | null $index = null): int
+    public function scopeMassUpdate(Builder $query, array $values, array | string | null $index = null): int
     {
         if (empty($values)) {
             return 0;

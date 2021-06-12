@@ -1,12 +1,12 @@
 {
-    "name": "iksaku/laravel-batch-update",
+    "name": "iksaku/laravel-mass-update",
     "description": "Update multiple Laravel Model records, each with different values, using a single query!",
     "keywords": [
         "iksaku",
         "laravel",
-        "laravel-batch-update"
+        "laravel-mass-update"
     ],
-    "homepage": "https://github.com/iksaku/laravel-batch-update",
+    "homepage": "https://github.com/iksaku/laravel-mass-update",
     "license": "MIT",
     "authors": [
         {
@@ -29,13 +29,13 @@
     },
     "autoload": {
         "psr-4": {
-            "iksaku\\LaravelBatchUpdate\\": "src",
-            "iksaku\\LaravelBatchUpdate\\Database\\Factories\\": "database/factories"
+            "iksaku\\LaravelMassUpdate\\": "src",
+            "iksaku\\LaravelMassUpdate\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "iksaku\\LaravelBatchUpdate\\Tests\\": "tests"
+            "iksaku\\LaravelMassUpdate\\Tests\\": "tests"
         }
     },
     "scripts": {

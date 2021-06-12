@@ -1,11 +1,11 @@
-# Laravel Batch Update
+# Laravel Mass Update
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/iksaku/laravel-batch-update.svg?style=flat-square)](https://packagist.org/packages/iksaku/laravel-batch-update)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/iksaku/laravel-batch-update/run-tests?label=tests)](https://github.com/iksaku/laravel-batch-update/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/iksaku/laravel-batch-update/Check%20&%20fix%20styling?label=code%20style)](https://github.com/iksaku/laravel-batch-update/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/iksaku/laravel-batch-update.svg?style=flat-square)](https://packagist.org/packages/iksaku/laravel-batch-update)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/iksaku/laravel-mass-update.svg?style=flat-square)](https://packagist.org/packages/iksaku/laravel-mass-update)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/iksaku/laravel-mass-update/run-tests?label=tests)](https://github.com/iksaku/laravel-mass-update/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/iksaku/laravel-mass-update/Check%20&%20fix%20styling?label=code%20style)](https://github.com/iksaku/laravel-mass-update/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/iksaku/laravel-mass-update.svg?style=flat-square)](https://packagist.org/packages/iksaku/laravel-mass-update)
 
-Update multiple Laravel Model records, each with it's own set of values, sending a single
+Update multiple Laravel Model records, each with its own set of values, sending a single
 query to your database!
 
 ## Installation
@@ -13,19 +13,19 @@ query to your database!
 You can install the package via composer:
 
 ```bash
-composer require iksaku/laravel-batch-update
+composer require iksaku/laravel-mass-update
 ```
 
 ## Usage
 
-In your model class, add the `iksaku\Laravel\BatchUpdatable` trait:
+In your model class, add the `iksaku\Laravel\MassUpdatable` trait:
 
 ```php
-use iksaku\Laravel\BatchUpdatable;
+use iksaku\Laravel\MassUpdatable;
 
 class User extends Model
 {
-    use BatchUpdatable;
+    use MassUpdatable;
     
     // ...
 }
@@ -45,10 +45,10 @@ Image that you have the following `users` table:
 But, we want to update both records since those users have told us that their legal last name was misspelled
 (missing accent in the letter `a` and last character should be a `z`, not an `s`).
 
-Well, we can batch update those specific records:
+Well, we can mass update those specific records:
 
 ```php
-User::batchUpdate(
+User::massUpdate(
     values: [
         ['id' => 1, 'name' => 'Jorge González'],
         ['id' => 2, 'name' => 'Elena González'],
@@ -63,14 +63,14 @@ Now, both records will be updated with their corresponding values in a single qu
 | 1  | Jorge González | iksaku   |
 | 2  | Elena González | _TBD_    |
 
-By default, the `batchUpdate` query will grab your model's primary key name and apply it as part of
+By default, the `massUpdate` query will grab your model's primary key name and apply it as part of
 the query to not affect other records.
 
 If you want to use another column as an index to separate value types, you could pass it as a second
 argument to the function call:
 
 ```php
-User::batchUpdate(
+User::massUpdate(
     values: [
         ['username' => 'iksaku', 'name' => 'Jorge González'],
         ['username' => 'TBD', 'name' => 'Elena González'],
@@ -102,7 +102,7 @@ we could only pass the `quarter` column as an index, but if we only pass down th
 we'll modify **ALL** `Q1` records. So, for this, we should also pass down the `year` column as an index:
 
 ```php
-Expense::batchUpdate(
+Expense::massUpdate(
     values: [
         ['year' => 2020, 'quarter' => 'Q1', 'total_expenses' => 431.35],
         ['year' => 2021, 'quarter' => 'Q1', 'total_expenses' => 416.70],
