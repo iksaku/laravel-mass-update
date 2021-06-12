@@ -1,6 +1,6 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace iksaku\LaravelBatchUpdate\Tests;
 
 class ExampleTest extends TestCase
 {

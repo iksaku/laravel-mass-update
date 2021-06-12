@@ -1,42 +1,41 @@
 {
-    "name": "vendor_slug/package_slug",
-    "description": ":package_description",
+    "name": "iksaku/laravel-batch-update",
+    "description": "Update multiple Laravel Model records, each with different values, using a single query!",
     "keywords": [
-        ":vendor_name",
+        "iksaku",
         "laravel",
-        "package_slug"
+        "laravel-batch-update"
     ],
-    "homepage": "https://github.com/vendor_slug/package_slug",
+    "homepage": "https://github.com/iksaku/laravel-batch-update",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Jorge González",
+            "email": "yo@jorgeglz.io",
             "role": "Developer"
         }
     ],
     "require": {
         "php": "^8.0",
-        "spatie/laravel-package-tools": "^1.4.3",
-        "illuminate/contracts": "^8.37"
+        "illuminate/database": "^8.0",
+        "illuminate/support": "^8.0"
     },
     "require-dev": {
         "brianium/paratest": "^6.2",
         "nunomaduro/collision": "^5.3",
         "orchestra/testbench": "^6.15",
         "phpunit/phpunit": "^9.3",
-        "spatie/laravel-ray": "^1.9",
         "vimeo/psalm": "^4.4"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories"
+            "iksaku\\LaravelBatchUpdate\\": "src",
+            "iksaku\\LaravelBatchUpdate\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "iksaku\\LaravelBatchUpdate\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -46,16 +45,6 @@
     },
     "config": {
         "sort-packages": true
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
-            ],
-            "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\SkeletonFacade"
-            }
-        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

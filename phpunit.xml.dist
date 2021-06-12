@@ -19,7 +19,7 @@
     verbose="true"
 >
     <testsuites>
-        <testsuite name="VendorName Test Suite">
+        <testsuite name="Laravel Batch Update Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
