@@ -1,6 +1,6 @@
 <?php
 
-namespace iksaku\Laravel;
+namespace iksaku\Laravel\MassUpdate;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -55,7 +55,7 @@ trait MassUpdatable
                     $whereIn[$column][] = $value;
                 }
 
-                $conditions[] = "{$this->escapeColumn($column)} = $value";
+                $conditions[] = "{$query->getGrammar()->wrap($column)} = $value";
             }
 
             // Compile into SQL case conditions.
@@ -85,7 +85,7 @@ trait MassUpdatable
         $compiledUpdates = [];
         foreach ($updateValues as $column => $conditionalAssignments) {
             $compiledUpdates[$column] = DB::raw(
-                'CASE '.implode("\n", $conditionalAssignments)." ELSE {$this->escapeColumn($column)} END"
+                'CASE '.implode("\n", $conditionalAssignments)." ELSE {$query->getGrammar()->wrap($column)} END"
             );
         }
 
@@ -96,14 +96,5 @@ trait MassUpdatable
 
         // Finally, execute the query and return the updated rows.
         return $query->update($compiledUpdates);
-    }
-
-    protected function escapeColumn(string $column): string
-    {
-        if ($this->getConnection()->getDriverName() === 'pgsql') {
-            return "\"$column\"";
-        }
-
-        return "`$column`";
     }
 }

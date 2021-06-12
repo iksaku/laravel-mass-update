@@ -1,6 +1,6 @@
 <?php
 
-namespace iksaku\LaravelBatchUpdate\Tests;
+namespace iksaku\Laravel\MassUpdateBatchUpdate\Tests;
 
 class ExampleTest extends TestCase
 {

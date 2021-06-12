@@ -1,6 +1,6 @@
 <?php
 
-namespace iksaku\LaravelBatchUpdate\Tests;
+namespace iksaku\Laravel\MassUpdateBatchUpdate\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;

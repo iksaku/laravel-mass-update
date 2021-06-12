@@ -29,13 +29,13 @@
     },
     "autoload": {
         "psr-4": {
-            "iksaku\\LaravelMassUpdate\\": "src",
-            "iksaku\\LaravelMassUpdate\\Database\\Factories\\": "database/factories"
+            "iksaku\\Laravel\\MassUpdate\\": "src",
+            "iksaku\\Laravel\\MassUpdate\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "iksaku\\LaravelMassUpdate\\Tests\\": "tests"
+            "iksaku\\Laravel\\MassUpdate\\Tests\\": "tests"
         }
     },
     "scripts": {
