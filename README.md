@@ -120,8 +120,8 @@ The result in the table will be properly updated:
 | .. | ..   | ..      | ..             |
 | .. | 2021 | Q1      | **416.70**     |
 
-If, for any reason, you ever need to specify more than one index, it is possible!
-Just include both indexes in the `values` and `index` parameter.
+> Note: If, for any reason, you ever need to specify more than one or two indexes,
+> just include all of them in the `values` and `index` parameter.
 
 ### Advanced use case: Chaining with other query statements
 
