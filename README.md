@@ -86,6 +86,7 @@ we manually filled the following values:
 
 | id | year | quarter | total_expenses |
 | -- | ---- | ------- | -------------- |
+| .. | ..   | ..      | ..             |
 | .. | 2019 | Q3      | 216.70         |
 | .. | 2019 | Q4      | 216.70         |
 | .. | 2020 | Q1      | **416.70**     |
@@ -96,8 +97,9 @@ we manually filled the following values:
 
 > Above information is not real, I don't track my expenses quarterly.
 
-Oops... We made a little mistake... Expenses from Q1 of 2020 and 2021 are switched, and in order to fix it,
-we can do the following:
+Oops... We made a little mistake... Expenses from Q1 of 2020 and 2021 are switched, and in order to fix it
+we could only pass the `quarter` column as an index, but if we only pass down the `quarter` column as an index,
+we'll modify **ALL** `Q1` records. So, for this, we should also pass down the `year` column as an index.
 
 ```php
 Expense::batchUpdate(
@@ -113,13 +115,13 @@ The result in the table will be properly updated:
 
 | id | year | quarter | total_expenses |
 | -- | ---- | ------- | -------------- |
-| .. | 2019 | Q3      | 216.70         |
-| .. | 2019 | Q4      | 216.70         |
+| .. | ..   | ..      | ..             |
 | .. | 2020 | Q1      | **431.35**     |
-| .. | 2020 | Q2      | 211.12         |
-| .. | 2020 | Q3      | 113.17         |
-| .. | 2020 | Q4      | 422.89         |
+| .. | ..   | ..      | ..             |
 | .. | 2021 | Q1      | **416.70**     |
+
+If, for any reason, you ever need to specify more than one index, it is possible!
+Just include both indexes in the `values` and `index` parameter.
 
 ### Advanced use case: Chaining with other query statements
 
