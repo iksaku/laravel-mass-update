@@ -99,7 +99,7 @@ we manually filled the following values:
 
 Oops... We made a little mistake... Expenses from Q1 of 2020 and 2021 are switched, and in order to fix it
 we could only pass the `quarter` column as an index, but if we only pass down the `quarter` column as an index,
-we'll modify **ALL** `Q1` records. So, for this, we should also pass down the `year` column as an index.
+we'll modify **ALL** `Q1` records. So, for this, we should also pass down the `year` column as an index:
 
 ```php
 Expense::batchUpdate(
