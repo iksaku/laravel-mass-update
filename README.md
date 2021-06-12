@@ -121,7 +121,7 @@ The result in the table will be properly updated:
 | .. | 2021 | Q1      | **416.70**     |
 
 > Note: If, for any reason, you ever need to specify more than one or two indexes,
-> just include all of them in the `values` and `index` parameter.
+> just include all of them in the `values` and `index` parameters.
 
 ### Advanced use case: Chaining with other query statements
 
