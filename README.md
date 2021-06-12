@@ -43,7 +43,7 @@ Image that you have the following `users` table:
 | 2  | Elena Gonzales | _TBD_    |
 
 But, we want to update both records since those users have told us that their legal last name was misspelled
-(missing apostrophe in the letter `a` and last character should be a `z`, not an `s`).
+(missing accent in the letter `a` and last character should be a `z`, not an `s`).
 
 Well, we can batch update those specific records:
 
