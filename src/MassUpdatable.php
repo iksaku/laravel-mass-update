@@ -12,89 +12,142 @@ use Illuminate\Support\Facades\DB;
  */
 trait MassUpdatable
 {
-    public function scopeMassUpdate(Builder $query, array $values, array | string | null $index = null): int
+    public function scopeMassUpdate(Builder $query, array $values, array | string | null $uniqueBy = null): int
     {
         if (empty($values)) {
             return 0;
         }
 
-        if ($index === null) {
-            $index = $this->getKeyName();
+        $uniqueBy ??= [$this->getKeyName()];
+
+        if (! is_array($uniqueBy)) {
+            $uniqueBy = Arr::wrap($uniqueBy);
         }
 
-        if (! is_array($index)) {
-            $index = Arr::wrap($index);
-        }
-
-        if (empty($index)) {
+        if (empty($uniqueBy)) {
             return 0;
         }
 
-        // Filter rows by index.
+        /*
+         * Values per row to use as a query filter.
+         * Example:
+         *  [
+         *      'id' => [1, 2, 3, 4, ...],
+         *      ...
+         *  ]
+         */
         $whereIn = [];
 
-        // Final list of values to update (Pre-Compilation).
-        $updateValues = [];
+        /*
+         * Column name-value association pending update.
+         * Value is pre-compiled into a `WHEN <condition> THEN <value>` format.
+         * Example:
+         *  [
+         *      'name' => [
+         *          'WHEN `id` = 1 THEN Jorge González',
+         *          'WHEN `id` = 2 THEN Elena González',
+         *          ...
+         *      ]
+         *  ]
+         */
+        $preCompiledUpdateStatements = [];
 
-        // Cache the index columns as a filter to separate them
-        // from the values to update on each row.
-        $intersectIndexes = array_flip($index);
+        // Cached column reference used to separate from each record's value.
+        $intersectionColumns = array_flip($uniqueBy);
 
-        foreach ($values as $row) {
-            // Obtain the indexes on which we'll compare the value.
-            $indexes = array_intersect_key($row, $intersectIndexes);
+        foreach ($values as $record) {
+            /*
+             * List of conditions for our future `CASE` statement to be met
+             * in order to update current record's value.
+             */
+            $preCompiledConditions = [];
 
-            $conditions = [];
+            /*
+             * Loop through columns designed as `unique`, which will allow
+             * the DB to properly assign the correct value to the correct
+             * record.
+             */
+            foreach (array_intersect_key($record, $intersectionColumns) as $column => $value) {
+                $preCompiledConditions[] = "{$query->getGrammar()->wrap($column)} = $value";
 
-            // Include indexes in the top-level $whereIn
-            // and merge as a condition to compile later on.
-            foreach ($indexes as $column => $value) {
-                $whereIn[$column] ??= [];
+                if (! isset($whereIn[$column])) {
+                    $whereIn[$column] = [$value];
+                    continue;
+                }
 
                 if (! in_array($value, $whereIn[$column])) {
                     $whereIn[$column][] = $value;
                 }
-
-                $conditions[] = "{$query->getGrammar()->wrap($column)} = $value";
             }
 
-            // Compile into SQL case conditions.
-            $conditions = implode(' AND ', $conditions);
+            $preCompiledConditions = implode(' AND ', $preCompiledConditions);
 
-            // Separate the values to update from their indexes.
-            $valuesToUpdate = array_diff_key($row, $intersectIndexes);
+             /*
+              * Loop through the columns that are actual values to update.
+              * These do not include the `unique columns`, so we will not
+              * be updating those.
+              */
+            foreach (array_diff_key($record, $intersectionColumns) as $column => $value) {
+                $preCompiledAssociation = "WHEN $preCompiledConditions THEN $value";
 
-            // Include values in top-level $updateValues.
-            foreach ($valuesToUpdate as $column => $value) {
-                $value = "WHEN $conditions THEN $value";
+                if (! isset($preCompiledUpdateStatements[$column])) {
+                    $preCompiledUpdateStatements[$column] = [$preCompiledAssociation];
+                    continue;
+                }
 
-                $updateValues[$column] ??= [];
-
-                if (! in_array($value, $updateValues[$column])) {
-                    $updateValues[$column][] = $value;
+                if (! in_array($preCompiledAssociation, $preCompiledUpdateStatements[$column])) {
+                    $preCompiledUpdateStatements[$column][] = $preCompiledAssociation;
                 }
             }
         }
 
-        // Apply $whereIn filter.
-        foreach ($whereIn as $column => $indexes) {
-            $query->whereIn($column, $indexes);
+        /*
+         * Tell the DB to only operate in rows where the specified
+         * `unique` columns equal the collected values.
+         */
+        foreach ($whereIn as $column => $values) {
+            $query->whereIn($column, $values);
         }
 
-        // Compile multiple values to update.
-        $compiledUpdates = [];
-        foreach ($updateValues as $column => $conditionalAssignments) {
-            $compiledUpdates[$column] = DB::raw(
-                'CASE '.implode("\n", $conditionalAssignments)." ELSE {$query->getGrammar()->wrap($column)} END"
-            );
-        }
+        /*
+         * Final column name-value association pending update.
+         * Value is compiled as an SQL `CASE WHEN ... THEN ...` statement,
+         * which will tell the DB to assign a different value depending
+         * on the column values of the row it's currently operating on.
+         * Example:
+         *  [
+         *      'name' => <<<SQL
+         *          CASE WHEN `id` = 1 THEN Jorge González
+         *               WHEN `id` = 2 THEN Elena González
+         *               ELSE `name`
+         *          END
+         *      SQL,
+         *      ...
+         *  ]
+         */
+        $compiledUpdateStatements = array_map(
+            function (array $conditionalAssignments, string $column) use ($query) {
+                $conditions = implode("\n", $conditionalAssignments);
 
-        // If model needs it, also include the updatedAt column.
+                return DB::raw(<<<SQL
+                    CASE $conditions
+                    ELSE {$query->getGrammar()->wrap($column)}
+                    END
+                SQL);
+            },
+            $preCompiledUpdateStatements,
+            array_keys($preCompiledUpdateStatements)
+        );
+
+        // If the model tracks an update timestamp, update it for all touched records.
         if ($this->usesTimestamps() && $this->getUpdatedAtColumn() !== null) {
-            $compiledUpdates[$this->getUpdatedAtColumn()] = now()->format($this->getDateFormat());
+            $compiledUpdateStatements[$this->getUpdatedAtColumn()] = $this->freshTimestampString();
         }
 
-        // Finally, execute the query and return the updated rows.
-        return $query->update($compiledUpdates);
+        /*
+         * Finally, execute the update query against the database and
+         * return the number of touched records.
+         */
+        return $query->update($compiledUpdateStatements);
     }
 }
