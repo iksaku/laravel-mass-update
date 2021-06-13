@@ -18,15 +18,11 @@ trait MassUpdatable
             return 0;
         }
 
-        $uniqueBy ??= [$this->getKeyName()];
-
-        if (! is_array($uniqueBy)) {
-            $uniqueBy = Arr::wrap($uniqueBy);
-        }
-
-        if (empty($uniqueBy)) {
+        if ($uniqueBy !== null && empty($uniqueBy)) {
             return 0;
         }
+
+        $uniqueBy = Arr::wrap($uniqueBy ?? $this->getKeyName());
 
         /*
          * Values per row to use as a query filter.

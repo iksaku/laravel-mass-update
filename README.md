@@ -76,7 +76,7 @@ User::massUpdate(
         ['username' => 'iksaku', 'name' => 'Jorge González'],
         ['username' => 'TBD', 'name' => 'Elena González'],
     ],
-    index: 'username'
+    uniqueBy: 'username'
 );
 ```
 
@@ -108,7 +108,7 @@ Expense::massUpdate(
         ['year' => 2020, 'quarter' => 'Q1', 'total_expenses' => 431.35],
         ['year' => 2021, 'quarter' => 'Q1', 'total_expenses' => 416.70],
     ],
-    index: ['year', 'quarter']
+    uniqueBy: ['year', 'quarter']
 );
 ```
 
