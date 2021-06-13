@@ -72,6 +72,7 @@ trait MassUpdatable
 
                 if (! isset($whereIn[$column])) {
                     $whereIn[$column] = [$value];
+
                     continue;
                 }
 
@@ -82,16 +83,17 @@ trait MassUpdatable
 
             $preCompiledConditions = implode(' AND ', $preCompiledConditions);
 
-             /*
-              * Loop through the columns that are actual values to update.
-              * These do not include the `unique columns`, so we will not
-              * be updating those.
-              */
+            /*
+             * Loop through the columns that are actual values to update.
+             * These do not include the `unique columns`, so we will not
+             * be updating those.
+             */
             foreach (array_diff_key($record, $intersectionColumns) as $column => $value) {
                 $preCompiledAssociation = "WHEN $preCompiledConditions THEN $value";
 
                 if (! isset($preCompiledUpdateStatements[$column])) {
                     $preCompiledUpdateStatements[$column] = [$preCompiledAssociation];
+
                     continue;
                 }
 
