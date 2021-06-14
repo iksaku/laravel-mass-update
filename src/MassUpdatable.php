@@ -3,8 +3,8 @@
 namespace iksaku\Laravel\MassUpdate;
 
 use iksaku\Laravel\MassUpdate\Exceptions\EmptyUniqueByException;
-use iksaku\Laravel\MassUpdate\Exceptions\OrphanValueException;
 use iksaku\Laravel\MassUpdate\Exceptions\MassUpdatingAndFilteringModelUsingTheSameColumn;
+use iksaku\Laravel\MassUpdate\Exceptions\OrphanValueException;
 use iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutFilterableColumnsException;
 use iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutUpdatableValuesException;
 use Illuminate\Contracts\Support\Arrayable;
@@ -174,7 +174,7 @@ trait MassUpdatable
                         CASE $conditions
                         ELSE {$query->getGrammar()->wrap($column)}
                         END
-                    SQL)
+                    SQL),
                 ];
             })
             ->toArray();
