@@ -23,7 +23,7 @@ it('fails when model is trying to update and filter on the same column', functio
     $user = User::factory()->create();
     $user->fill([
         'id' => 2,
-        'name' => 'Jorge'
+        'name' => 'Jorge',
     ]);
 
     $this->expectException(MassUpdatingAndFilteringModelUsingTheSameColumn::class);
