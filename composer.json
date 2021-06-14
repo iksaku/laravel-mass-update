@@ -24,18 +24,21 @@
         "brianium/paratest": "^6.2",
         "nunomaduro/collision": "^5.3",
         "orchestra/testbench": "^6.15",
+        "pestphp/pest": "^1.4",
         "phpunit/phpunit": "^9.3",
         "vimeo/psalm": "^4.4"
     },
     "autoload": {
         "psr-4": {
-            "iksaku\\Laravel\\MassUpdate\\": "src",
-            "iksaku\\Laravel\\MassUpdate\\Database\\Factories\\": "database/factories"
+            "iksaku\\Laravel\\MassUpdate\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "iksaku\\Laravel\\MassUpdate\\Tests\\": "tests"
+            "iksaku\\Laravel\\MassUpdate\\Tests\\": "tests",
+            "iksaku\\Laravel\\MassUpdate\\Tests\\App\\": "tests/app",
+            "iksaku\\Laravel\\MassUpdate\\Tests\\Database\\": "tests/database",
+            "iksaku\\Laravel\\MassUpdate\\Tests\\Database\\Factories\\": "tests/database/factories"
         }
     },
     "scripts": {

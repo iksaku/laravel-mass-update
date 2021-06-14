@@ -2,6 +2,12 @@
 
 namespace iksaku\Laravel\MassUpdate;
 
+use iksaku\Laravel\MassUpdate\Exceptions\EmptyUniqueByException;
+use iksaku\Laravel\MassUpdate\Exceptions\OrphanValueException;
+use iksaku\Laravel\MassUpdate\Exceptions\MassUpdatingAndFilteringModelUsingTheSameColumn;
+use iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutFilterableColumnsException;
+use iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutUpdatableValuesException;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -12,15 +18,19 @@ use Illuminate\Support\Facades\DB;
  */
 trait MassUpdatable
 {
-    public function scopeMassUpdate(Builder $query, array $values, array | string | null $uniqueBy = null): int
+    public function scopeMassUpdate(Builder $query, array | Arrayable $values, array | string | null $uniqueBy = null): int
     {
         if (empty($values)) {
             return 0;
         }
 
         if ($uniqueBy !== null && empty($uniqueBy)) {
-            return 0;
+            throw new EmptyUniqueByException();
         }
+
+        $quoteIfString = fn (mixed $value) => is_string($value)
+            ? $query->getGrammar()->quoteString($value)
+            : $value;
 
         $uniqueBy = Arr::wrap($uniqueBy ?? $this->getKeyName());
 
@@ -52,19 +62,43 @@ trait MassUpdatable
         $intersectionColumns = array_flip($uniqueBy);
 
         foreach ($values as $record) {
+            if (empty($record)) {
+                continue;
+            }
+
+            if ($record instanceof Model) {
+                if (! $record->isDirty()) {
+                    continue;
+                }
+
+                $uniqueColumns = array_intersect_key($record->getAttributes(), $intersectionColumns);
+                $updatableColumns = $record->getDirty();
+
+                if (! empty($crossReferencedColumns = array_intersect_key($updatableColumns, $uniqueColumns))) {
+                    throw new MassUpdatingAndFilteringModelUsingTheSameColumn($crossReferencedColumns);
+                }
+            } else {
+                $uniqueColumns = array_intersect_key($record, $intersectionColumns);
+                $updatableColumns = array_diff_key($record, $intersectionColumns);
+            }
+
             /*
              * List of conditions for our future `CASE` statement to be met
              * in order to update current record's value.
              */
             $preCompiledConditions = [];
 
+            if (empty($uniqueColumns)) {
+                throw new RecordWithoutFilterableColumnsException();
+            }
+
             /*
              * Loop through columns designed as `unique`, which will allow
              * the DB to properly assign the correct value to the correct
              * record.
              */
-            foreach (array_intersect_key($record, $intersectionColumns) as $column => $value) {
-                $preCompiledConditions[] = "{$query->getGrammar()->wrap($column)} = $value";
+            foreach ($uniqueColumns as $column => $value) {
+                $preCompiledConditions[] = "{$query->getGrammar()->wrap($column)} = {$quoteIfString($value)}";
 
                 if (! isset($whereIn[$column])) {
                     $whereIn[$column] = [$value];
@@ -79,13 +113,21 @@ trait MassUpdatable
 
             $preCompiledConditions = implode(' AND ', $preCompiledConditions);
 
+            if (empty($updatableColumns)) {
+                throw new RecordWithoutUpdatableValuesException();
+            }
+
             /*
              * Loop through the columns that are actual values to update.
              * These do not include the `unique columns`, so we will not
              * be updating those.
              */
-            foreach (array_diff_key($record, $intersectionColumns) as $column => $value) {
-                $preCompiledAssociation = "WHEN $preCompiledConditions THEN $value";
+            foreach ($updatableColumns as $column => $value) {
+                if (! is_string($column)) {
+                    throw new OrphanValueException($value);
+                }
+
+                $preCompiledAssociation = "WHEN $preCompiledConditions THEN {$quoteIfString($value)}";
 
                 if (! isset($preCompiledUpdateStatements[$column])) {
                     $preCompiledUpdateStatements[$column] = [$preCompiledAssociation];
@@ -123,19 +165,19 @@ trait MassUpdatable
          *      ...
          *  ]
          */
-        $compiledUpdateStatements = array_map(
-            function (array $conditionalAssignments, string $column) use ($query) {
+        $compiledUpdateStatements = collect($preCompiledUpdateStatements)
+            ->mapWithKeys(function (array $conditionalAssignments, string $column) use ($query) {
                 $conditions = implode("\n", $conditionalAssignments);
 
-                return DB::raw(<<<SQL
-                    CASE $conditions
-                    ELSE {$query->getGrammar()->wrap($column)}
-                    END
-                SQL);
-            },
-            $preCompiledUpdateStatements,
-            array_keys($preCompiledUpdateStatements)
-        );
+                return [
+                    $column => DB::raw(<<<SQL
+                        CASE $conditions
+                        ELSE {$query->getGrammar()->wrap($column)}
+                        END
+                    SQL)
+                ];
+            })
+            ->toArray();
 
         // If the model tracks an update timestamp, update it for all touched records.
         if ($this->usesTimestamps() && $this->getUpdatedAtColumn() !== null) {

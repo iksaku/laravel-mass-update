@@ -2,15 +2,8 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-    backupGlobals="false"
-    backupStaticAttributes="false"
     bootstrap="vendor/autoload.php"
     colors="true"
-    convertErrorsToExceptions="true"
-    convertNoticesToExceptions="true"
-    convertWarningsToExceptions="true"
-    processIsolation="false"
-    stopOnFailure="false"
     executionOrder="random"
     failOnWarning="true"
     failOnRisky="true"
@@ -19,8 +12,8 @@
     verbose="true"
 >
     <testsuites>
-        <testsuite name="Laravel Batch Update Test Suite">
-            <directory>tests</directory>
+        <testsuite name="Feature Tests">
+            <directory suffix="Test.php">tests/Feature</directory>
         </testsuite>
     </testsuites>
     <coverage>
