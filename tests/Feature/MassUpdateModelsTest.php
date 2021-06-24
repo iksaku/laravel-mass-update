@@ -18,6 +18,17 @@ it('can process array of changed models', function () {
     );
 });
 
+it('skips models that have not changed', function () {
+    /** @var User[] $users */
+    $users = User::factory()->count(2)->create();
+
+    $users[0]->name = 'Jorge';
+
+    expect(User::query()->massUpdate($users))->toBe(1);
+
+    expect(User::query()->first()->name)->toBe('Jorge');
+});
+
 it('fails when model is trying to update and filter on the same column', function () {
     /** @var User $user */
     $user = User::factory()->create();
