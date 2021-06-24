@@ -80,6 +80,38 @@ User::massUpdate(
 );
 ```
 
+### Simple use case #2: Updating multiple Eloquent Models
+
+If you need to update the values in some Model classes and want to automatically mass update those changes,
+then this is for you!
+
+The existing `masUpdate` query is capable of identifying the changed attributes of `Eloquent` model classes
+and compile them properly. You don't need to manually cast them `toArray()`, instead, you just pass an array
+with the models you want to update.
+
+Let's recreate the previous example, but using `Eloquent` models...
+
+```php
+// Say we already pulled our user models previously... Something like this:
+$jorge = User::where('name', 'Jorge Gonzales')->first();
+$elena = User::where('name', 'Elena Gonzales')->first();
+
+// And let's say we already made changes to those models... Like this:
+$jorge->name = 'Jorge González';
+$elena->name = 'Elena González';
+
+// And now, let's update both models in a single query:
+User::massUpdate(
+    values: [$jorge, $elena],
+    uniqueBy: 'id'
+);
+```
+
+Pretty cool, right?
+
+> Tip: If you pass a full list of `Eloquent` models, only those with _dirty_ values will be updated,
+> so you don't actually need to filter the unchanged ones manually.
+
 ### Complicated use case: Using multiple indexes to differentiate records
 
 Let's say that we just created `expenses` table to track how much we spend across time, and
@@ -90,11 +122,11 @@ we manually filled the following values:
 | .. | ..   | ..      | ..             |
 | .. | 2019 | Q3      | 216.70         |
 | .. | 2019 | Q4      | 216.70         |
-| .. | 2020 | Q1      | **416.70**     |
+| .. | 2020 | Q1      | `416.70`       |
 | .. | 2020 | Q2      | 211.12         |
 | .. | 2020 | Q3      | 113.17         |
 | .. | 2020 | Q4      | 422.89         |
-| .. | 2021 | Q1      | **431.35**     |
+| .. | 2021 | Q1      | `431.35`       |
 
 > Above information is not real, I don't track my expenses quarterly.
 
@@ -121,8 +153,17 @@ The result in the table will be properly updated:
 | .. | ..   | ..      | ..             |
 | .. | 2021 | Q1      | **416.70**     |
 
-> Note: If, for any reason, you ever need to specify more than one or two indexes,
-> just include all of them in the `values` and `index` parameters.
+> Tip: If, for any reason, you ever need to specify more than one or two indexes,
+> just include all of them in the `values` and `uniqueBy` parameters.
+
+#### Important Note
+
+It is not possible to update the values of the `uniqueBy` columns.
+Every column specified in this parameter will be filtered from the ones that
+are going to be updated.
+
+This prevents unexpected side effects from happening while updating `values`
+in `array` shape and passed as `Eloquent` models.
 
 ### Advanced use case: Chaining with other query statements
 
