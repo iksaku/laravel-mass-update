@@ -1,7 +1,7 @@
 # Laravel Mass Update
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/iksaku/laravel-mass-update.svg?style=flat-square)](https://packagist.org/packages/iksaku/laravel-mass-update)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/iksaku/laravel-mass-update/run-tests?label=tests)](https://github.com/iksaku/laravel-mass-update/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/iksaku/laravel-mass-update/Run%20Tests?label=tests)](https://github.com/iksaku/laravel-mass-update/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/iksaku/laravel-mass-update/Check%20&%20fix%20styling?label=code%20style)](https://github.com/iksaku/laravel-mass-update/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/iksaku/laravel-mass-update.svg?style=flat-square)](https://packagist.org/packages/iksaku/laravel-mass-update)
 
