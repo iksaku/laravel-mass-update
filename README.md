@@ -85,7 +85,7 @@ User::massUpdate(
 If you need to update the values in some Model classes and want to automatically mass update those changes,
 then this is for you!
 
-The existing `masUpdate` query is capable of identifying the changed attributes of `Eloquent` model classes
+The existing `masUpdate` query is capable of identifying the _dirty_ attributes of `Eloquent` model classes
 and compile them properly. You don't need to manually cast them `toArray()`, instead, you just pass an array
 with the models you want to update.
 
@@ -102,8 +102,7 @@ $elena->name = 'Elena González';
 
 // And now, let's update both models in a single query:
 User::massUpdate(
-    values: [$jorge, $elena],
-    uniqueBy: 'id'
+    values: [$jorge, $elena]
 );
 ```
 
