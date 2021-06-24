@@ -34,6 +34,8 @@ class User extends Model
 
 And that's all! Your model is now ready to update multiple records with varying values in a single query!
 
+Let's take a look at some possible use cases for this new query:
+
 ### Simple use case: Update the values of multiple records
 
 Image that you have the following `users` table:
@@ -111,6 +113,9 @@ Pretty cool, right?
 > Tip: If you pass a full list of `Eloquent` models, only those with _dirty_ values will be updated,
 > so you don't actually need to filter the unchanged ones manually.
 
+> Note: It is only possible to mass update instances of the same `Eloquent` model,
+> it is not possible to mix the _Query Builder_ with different `Eloquent` model classes.
+
 ### Complicated use case: Using multiple indexes to differentiate records
 
 Let's say that we just created `expenses` table to track how much we spend across time, and
@@ -148,21 +153,22 @@ The result in the table will be properly updated:
 | id | year | quarter | total_expenses |
 | -- | ---- | ------- | -------------- |
 | .. | ..   | ..      | ..             |
-| .. | 2020 | Q1      | **431.35**     |
+| .. | 2020 | Q1      | `431.35`       |
 | .. | ..   | ..      | ..             |
-| .. | 2021 | Q1      | **416.70**     |
+| .. | 2021 | Q1      | `416.70`       |
 
 > Tip: If, for any reason, you ever need to specify more than one or two indexes,
 > just include all of them in the `values` and `uniqueBy` parameters.
 
-#### Important Note
+> Note: It is important that you always include the `uniqueBy` columns in your
+> `values` array, otherwise, undesired effects may happen.
 
-It is not possible to update the values of the `uniqueBy` columns.
-Every column specified in this parameter will be filtered from the ones that
-are going to be updated.
-
-This prevents unexpected side effects from happening while updating `values`
-in `array` shape and passed as `Eloquent` models.
+> Note #2: It is not possible to update the values of the `uniqueBy` columns.
+> Every column specified in this parameter will be filtered from the ones that
+> are going to be updated.
+>
+> This prevents unexpected side effects from happening while updating `values`
+> in `array` shape and passed as `Eloquent` models.
 
 ### Advanced use case: Chaining with other query statements
 
