@@ -1,6 +1,6 @@
 <?php
 
-namespace iksaku\Laravel\MassUpdate\Database\Factories;
+namespace Iksaku\Laravel\MassUpdate\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

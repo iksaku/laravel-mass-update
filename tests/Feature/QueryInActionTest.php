@@ -1,6 +1,6 @@
 <?php
 
-use iksaku\Laravel\MassUpdate\Tests\App\Models\User;
+use Iksaku\Laravel\MassUpdate\Tests\App\Models\User;
 
 it('updates multiple records in a single query', function () {
     User::factory()->createMany([

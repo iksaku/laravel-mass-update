@@ -1,8 +1,8 @@
 <?php
 
-namespace iksaku\Laravel\MassUpdate\Tests\Database\Factories;
+namespace Iksaku\Laravel\MassUpdate\Tests\Database\Factories;
 
-use iksaku\Laravel\MassUpdate\Tests\App\Models\User;
+use Iksaku\Laravel\MassUpdate\Tests\App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory

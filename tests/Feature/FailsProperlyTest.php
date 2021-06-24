@@ -1,10 +1,10 @@
 <?php
 
-use iksaku\Laravel\MassUpdate\Exceptions\EmptyUniqueByException;
-use iksaku\Laravel\MassUpdate\Exceptions\OrphanValueException;
-use iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutFilterableColumnsException;
-use iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutUpdatableValuesException;
-use iksaku\Laravel\MassUpdate\Tests\App\Models\User;
+use Iksaku\Laravel\MassUpdate\Exceptions\EmptyUniqueByException;
+use Iksaku\Laravel\MassUpdate\Exceptions\OrphanValueException;
+use Iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutFilterableColumnsException;
+use Iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutUpdatableValuesException;
+use Iksaku\Laravel\MassUpdate\Tests\App\Models\User;
 
 it('returns 0 when no updatable records are given', function () {
     $result = User::query()->massUpdate([]);

@@ -1,12 +1,13 @@
 <?php
 
-namespace iksaku\Laravel\MassUpdate;
+namespace Iksaku\Laravel\MassUpdate;
 
-use iksaku\Laravel\MassUpdate\Exceptions\EmptyUniqueByException;
-use iksaku\Laravel\MassUpdate\Exceptions\MassUpdatingAndFilteringModelUsingTheSameColumn;
-use iksaku\Laravel\MassUpdate\Exceptions\OrphanValueException;
-use iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutFilterableColumnsException;
-use iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutUpdatableValuesException;
+use Iksaku\Laravel\MassUpdate\Exceptions\EmptyUniqueByException;
+use Iksaku\Laravel\MassUpdate\Exceptions\MassUpdatingAndFilteringModelUsingTheSameColumn;
+use Iksaku\Laravel\MassUpdate\Exceptions\OrphanValueException;
+use Iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutFilterableColumnsException;
+use Iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutUpdatableValuesException;
+use Iksaku\Laravel\MassUpdate\Exceptions\UnexpectedModelClassException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -67,6 +68,10 @@ trait MassUpdatable
             }
 
             if ($record instanceof Model) {
+                if ($record::class !== static::class) {
+                    throw new UnexpectedModelClassException(static::class, $record::class);
+                }
+
                 if (! $record->isDirty()) {
                     continue;
                 }
@@ -93,7 +98,7 @@ trait MassUpdatable
             }
 
             /*
-             * Loop through columns designed as `unique`, which will allow
+             * Loop through columns labelled as `unique`, which will allow
              * the DB to properly assign the correct value to the correct
              * record.
              */

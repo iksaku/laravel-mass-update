@@ -18,11 +18,11 @@ composer require iksaku/laravel-mass-update
 
 ## Usage
 
-In your model class, add the `iksaku\Laravel\MassUpdate\MassUpdatable` trait:
+In your model class, add the `Iksaku\Laravel\MassUpdate\MassUpdatable` trait:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use iksaku\Laravel\MassUpdate\MassUpdatable;
+use Iksaku\Laravel\MassUpdate\MassUpdatable;
 
 class User extends Model
 {

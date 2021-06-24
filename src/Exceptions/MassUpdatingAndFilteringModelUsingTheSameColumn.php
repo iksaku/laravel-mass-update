@@ -1,6 +1,6 @@
 <?php
 
-namespace iksaku\Laravel\MassUpdate\Exceptions;
+namespace Iksaku\Laravel\MassUpdate\Exceptions;
 
 use Throwable;
 use UnexpectedValueException;

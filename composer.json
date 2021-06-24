@@ -30,15 +30,15 @@
     },
     "autoload": {
         "psr-4": {
-            "iksaku\\Laravel\\MassUpdate\\": "src"
+            "Iksaku\\Laravel\\MassUpdate\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "iksaku\\Laravel\\MassUpdate\\Tests\\": "tests",
-            "iksaku\\Laravel\\MassUpdate\\Tests\\App\\": "tests/app",
-            "iksaku\\Laravel\\MassUpdate\\Tests\\Database\\": "tests/database",
-            "iksaku\\Laravel\\MassUpdate\\Tests\\Database\\Factories\\": "tests/database/factories"
+            "Iksaku\\Laravel\\MassUpdate\\Tests\\": "tests",
+            "Iksaku\\Laravel\\MassUpdate\\Tests\\App\\": "tests/app",
+            "Iksaku\\Laravel\\MassUpdate\\Tests\\Database\\": "tests/database",
+            "Iksaku\\Laravel\\MassUpdate\\Tests\\Database\\Factories\\": "tests/database/factories"
         }
     },
     "scripts": {

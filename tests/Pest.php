@@ -11,7 +11,7 @@
 |
 */
 
-use iksaku\Laravel\MassUpdate\Tests\TestCase;
+use Iksaku\Laravel\MassUpdate\Tests\TestCase;
 
 uses(TestCase::class)->in('Feature');
 
