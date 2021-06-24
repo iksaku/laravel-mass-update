@@ -38,15 +38,16 @@ Let's take a look at some possible use cases for this new query:
 
 ### Simple use case: Update the values of multiple records
 
-Image that you have the following `users` table:
+Imagine that you have the following `users` table:
 
 | id | name           | username |
 | -- | -------------- | -------- |
 | 1  | Jorge Gonzales | iksaku   |
-| 2  | Elena Gonzales | _TBD_    |
+| 2  | Gladys Martines| gm_mtz   |
 
-But, we want to update both records since those users have told us that their legal last name was misspelled
-(missing accent in the letter `a` and last character should be a `z`, not an `s`).
+But, we want to update both records since those users have told us that their legal last name was misspelled:
+    * `González` is written with an accent on the letter `a`, and only uses `z`, never an `s`.
+    * `Martínez` is written with an accent on the letter `i`, and last letter should be a `z`, not an `s`
 
 Well, we can mass update those specific records:
 
@@ -54,17 +55,17 @@ Well, we can mass update those specific records:
 User::massUpdate(
     values: [
         ['id' => 1, 'name' => 'Jorge González'],
-        ['id' => 2, 'name' => 'Elena González'],
+        ['id' => 2, 'name' => 'Gladys Martínez'],
     ]
 );
 ```
 
 Now, both records will be updated with their corresponding values in a single query, resulting in:
 
-| id | name           | username |
-| -- | -------------- | -------- |
-| 1  | Jorge González | iksaku   |
-| 2  | Elena González | _TBD_    |
+| id | name            | username |
+| -- | --------------- | -------- |
+| 1  | Jorge González  | iksaku   |
+| 2  | Gladys Martínez | gm_mtz   |
 
 By default, the `massUpdate` query will grab your model's primary key name and apply it as part of
 the query to not affect other records.
@@ -76,7 +77,7 @@ argument to the function call:
 User::massUpdate(
     values: [
         ['username' => 'iksaku', 'name' => 'Jorge González'],
-        ['username' => 'TBD', 'name' => 'Elena González'],
+        ['username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
     ],
     uniqueBy: 'username'
 );
@@ -88,30 +89,30 @@ If you need to update the values in some Model classes and want to automatically
 then this is for you!
 
 The existing `masUpdate` query is capable of identifying the _dirty_ attributes of `Eloquent` model classes
-and compile them properly. You don't need to manually cast them `toArray()`, instead, you just pass an array
-with the models you want to update.
+and compile them properly. You don't need to manually convert the models into an array, you just pass the
+list of models you want to update, and it takes care of the rest.
+
+> Tip: If you pass a full list of `Eloquent` models, only those with _dirty_ values will be updated,
+> so you don't actually need to filter the unchanged ones manually.
 
 Let's recreate the previous example, but using `Eloquent` models...
 
 ```php
 // Say we already pulled our user models previously... Something like this:
 $jorge = User::where('name', 'Jorge Gonzales')->first();
-$elena = User::where('name', 'Elena Gonzales')->first();
+$gladys = User::where('name', 'Gladys Martines')->first();
 
 // And let's say we already made changes to those models... Like this:
 $jorge->name = 'Jorge González';
-$elena->name = 'Elena González';
+$gladys->name = 'Gladys Martínez';
 
 // And now, let's update both models in a single query:
 User::massUpdate(
-    values: [$jorge, $elena]
+    values: [$jorge, $gladys]
 );
 ```
 
 Pretty cool, right?
-
-> Tip: If you pass a full list of `Eloquent` models, only those with _dirty_ values will be updated,
-> so you don't actually need to filter the unchanged ones manually.
 
 > Note: It is only possible to mass update instances of the same `Eloquent` model,
 > it is not possible to mix the _Query Builder_ with different `Eloquent` model classes.
@@ -148,6 +149,9 @@ Expense::massUpdate(
 );
 ```
 
+> Tip: If you ever need to specify more than one or two indexes,
+> just include all of them in the `values` and `uniqueBy` parameters.
+
 The result in the table will be properly updated:
 
 | id | year | quarter | total_expenses |
@@ -157,13 +161,10 @@ The result in the table will be properly updated:
 | .. | ..   | ..      | ..             |
 | .. | 2021 | Q1      | `416.70`       |
 
-> Tip: If, for any reason, you ever need to specify more than one or two indexes,
-> just include all of them in the `values` and `uniqueBy` parameters.
+> **NOTE**: It is important that you always include the `uniqueBy` columns in your
+> `values` array, exceptions will be thrown otherwise.
 
-> Note: It is important that you always include the `uniqueBy` columns in your
-> `values` array, otherwise, undesired effects may happen.
-
-> Note #2: It is not possible to update the values of the `uniqueBy` columns.
+> **NOTE #2**: It is not possible to update the values of the `uniqueBy` columns.
 > Every column specified in this parameter will be filtered from the ones that
 > are going to be updated.
 >

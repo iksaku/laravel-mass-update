@@ -9,8 +9,8 @@ it('updates timestamps of touched records', function () {
 
     User::factory()->createMany([
         ['name' => 'Jorge Gonzales'],
-        ['name' => 'Elena Gonzales'],
-        ['name' => 'Gladys Martinez'],
+        ['name' => 'Gladys Martines'],
+        ['name' => 'Elena González'],
     ]);
 
     $this->travelBack();
@@ -19,7 +19,7 @@ it('updates timestamps of touched records', function () {
 
     User::query()->massUpdate([
         ['id' => 1, 'name' => 'Jorge González'],
-        ['id' => 2, 'name' => 'Elena González'],
+        ['id' => 2, 'name' => 'Gladys Martínez'],
     ]);
 
     expect(
@@ -38,8 +38,8 @@ it('updates custom timestamp column of touched records', function () {
 
     CustomUser::factory()->createMany([
         ['name' => 'Jorge Gonzales'],
-        ['name' => 'Elena Gonzales'],
-        ['name' => 'Gladys Martinez'],
+        ['name' => 'Gladys Martines'],
+        ['name' => 'Elena González'],
     ]);
 
     $this->travelBack();
@@ -48,7 +48,7 @@ it('updates custom timestamp column of touched records', function () {
 
     CustomUser::query()->massUpdate([
         ['id' => 1, 'name' => 'Jorge González'],
-        ['id' => 2, 'name' => 'Elena González'],
+        ['id' => 2, 'name' => 'Gladys Martínez'],
     ]);
 
     expect(

@@ -4,6 +4,7 @@ namespace Iksaku\Laravel\MassUpdate;
 
 use Iksaku\Laravel\MassUpdate\Exceptions\EmptyUniqueByException;
 use Iksaku\Laravel\MassUpdate\Exceptions\MassUpdatingAndFilteringModelUsingTheSameColumn;
+use Iksaku\Laravel\MassUpdate\Exceptions\MissingFilterableColumnsException;
 use Iksaku\Laravel\MassUpdate\Exceptions\OrphanValueException;
 use Iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutFilterableColumnsException;
 use Iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutUpdatableValuesException;
@@ -87,15 +88,19 @@ trait MassUpdatable
                 $updatableColumns = array_diff_key($record, $intersectionColumns);
             }
 
+            if (empty($uniqueColumns)) {
+                throw new RecordWithoutFilterableColumnsException();
+            }
+
+            if (count($missingColumns = array_diff_key($intersectionColumns, $uniqueColumns)) > 0) {
+                throw new MissingFilterableColumnsException(array_flip($missingColumns));
+            }
+
             /*
              * List of conditions for our future `CASE` statement to be met
              * in order to update current record's value.
              */
             $preCompiledConditions = [];
-
-            if (empty($uniqueColumns)) {
-                throw new RecordWithoutFilterableColumnsException();
-            }
 
             /*
              * Loop through columns labelled as `unique`, which will allow
