@@ -49,7 +49,7 @@ it('fails when trying to trying to update an unexpected model class', function (
     $this->expectException(UnexpectedModelClassException::class);
 
     User::query()->massUpdate([
-        $impostor::factory()->create()
+        $impostor::factory()->create(),
     ]);
 })->with([
     'Completely Different Model Class' => [Expense::class],
