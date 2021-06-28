@@ -46,8 +46,8 @@ Imagine that you have the following `users` table:
 | 2  | Gladys Martines| gm_mtz   |
 
 But, we want to update both records since those users have told us that their legal last name was misspelled:
-    * `González` is written with an accent on the letter `a`, and only uses `z`, never an `s`.
-    * `Martínez` is written with an accent on the letter `i`, and last letter should be a `z`, not an `s`
+  * `González` is written with an accent on the letter `a`, and only uses `z`, never an `s`.
+  * `Martínez` is written with an accent on the letter `i`, and last letter should be a `z`, not an `s`
 
 Well, we can mass update those specific records:
 
@@ -173,7 +173,49 @@ The result in the table will be properly updated:
 
 ### Advanced use case: Chaining with other query statements
 
-TODO
+Let's try to keep things simple and imagine a system that tracks _To-Do_ items for multiple users:
+
+| id | user_id | content                | order |
+| -- | ------- | ---------------------- | ----- |
+|  1 | 1       | Pick up my daughter    | 2     |
+|  2 | 1       | Buy a new ThinkPad     | 1     |
+|  3 | 1       | Drink water            | 3     |
+
+Like every _To-Do_ system, we let our users `order` their _To-Do_ items to see the most important ones at
+the top of the list, and to do this, we may be using a [simple sorting package](https://github.com/asantibanez/laravel-blade-sortable)
+that allows the user to drag items up and down the list.
+
+Once the user moves one item in the list, in the backend we may receive an array with a specific key-value shape:
+`['position' => 'id']`. With this, we're going to update the records' `position` based on the given `id`.
+
+We can simply call our `massUpdate` query function and everything will be done... Well, sort of...
+
+In this specific scenario, we're dealing with **multiple lists for multiple users**, that means that we may not
+be always able to control which `id` columns are sent to the server, maybe some malicious actor wants to hijack
+our _To-Do_ list and lower the priority for buying ThinkPads. This is a pretty serious security concern.
+
+There are many ways to solve this kind of issues, and a simple one is to _chain query statements_ to our
+`massUpdate` function.
+
+In this case, we're going to add a `where()` statement to only update those items that belong to the currently
+logged in user. And it's as simple as in any other Laravel query builder:
+
+```php
+TodoItem::query()
+    ->where('user_id', auth()->id())
+    ->massUpdate(
+        values: collect($request->input('item_order'))
+            ->mapWithKeys(
+                fn ($id, int $position) => ['id' => $id, 'order' => $position]
+            )
+    );
+```
+
+> Tip: Did you know you can pass Collections, LazyCollections, Eloquent Collections and basically
+> any `Arrayable` instance as `values` to the `massUpdate` query function?
+
+This can be used as an extra layer to ensure data integrity when dealing with User-provided input
+that affects multiple records in the database.
 
 ## Testing
 

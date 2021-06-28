@@ -39,3 +39,24 @@ it('uses model\'s default key column if no other filtering columns are provided'
 
     expect(Arr::first(DB::getQueryLog())['query'])->toContain('id');
 });
+
+it('can chain other query statements', function () {
+    $this->travelTo(now()->startOfDay());
+
+    User::factory()->count(10)->create();
+
+    $this->travelBack();
+
+    User::query()
+        ->where('id', '<', 5)
+        ->massUpdate([
+            ['id' => 1, 'name' => 'Updated User'],
+            ['id' => 4, 'name' => 'Updated User'],
+            ['id' => 5, 'name' => 'Ignored User'],
+            ['id' => 10, 'name' => 'Ignored User'],
+        ]);
+
+    expect(
+        User::query()->where('updated_at', '>', now()->startOfDay())->count()
+    )->toBe(2);
+});
