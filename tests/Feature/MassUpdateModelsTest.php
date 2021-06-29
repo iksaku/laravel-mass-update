@@ -1,6 +1,7 @@
 <?php
 
 use Iksaku\Laravel\MassUpdate\Tests\App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 it('can process array of changed models', function () {
     /** @var User[] $users */
@@ -26,4 +27,14 @@ it('skips models that have not changed', function () {
     expect(User::query()->massUpdate($users))->toBe(1);
 
     expect(User::query()->first()->name)->toBe('Jorge');
+});
+
+it('skips query execution if there are no updates in given models', function () {
+    $users = User::factory()->count(10)->create();
+
+    DB::enableQueryLog();
+
+    expect(User::query()->massUpdate($users))->toBe(0);
+
+    expect(DB::getQueryLog())->toHaveCount(0);
 });

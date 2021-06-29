@@ -92,6 +92,10 @@ trait MassUpdatable
                 throw new RecordWithoutFilterableColumnsException();
             }
 
+            if (empty($updatableColumns)) {
+                throw new RecordWithoutUpdatableValuesException();
+            }
+
             if (count($missingColumns = array_diff_key($intersectionColumns, $uniqueColumns)) > 0) {
                 throw new MissingFilterableColumnsException(array_flip($missingColumns));
             }
@@ -123,10 +127,6 @@ trait MassUpdatable
 
             $preCompiledConditions = implode(' AND ', $preCompiledConditions);
 
-            if (empty($updatableColumns)) {
-                throw new RecordWithoutUpdatableValuesException();
-            }
-
             /*
              * Loop through the columns that are actual values to update.
              * These do not include the `unique columns`, so we will not
@@ -149,6 +149,10 @@ trait MassUpdatable
                     $preCompiledUpdateStatements[$column][] = $preCompiledAssociation;
                 }
             }
+        }
+
+        if (empty($preCompiledUpdateStatements)) {
+            return 0;
         }
 
         /*
