@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCustomUsersTestTable extends Migration {
+class CreateCustomUsersTestTable extends Migration
+{
     public function up(): void
     {
         Schema::create('custom_users', function (Blueprint $table) {
