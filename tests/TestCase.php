@@ -25,7 +25,7 @@ class TestCase extends Orchestra
 
         $database_connections = [
             'sqlite' => [
-                'database' => ':memory:'
+                'database' => ':memory:',
             ],
             'mysql' => [
                 'database' => 'test',
@@ -41,7 +41,7 @@ class TestCase extends Orchestra
                 'database' => 'test',
                 'username' => 'root',
                 'password' => 'Password!',
-            ]
+            ],
         ];
 
         foreach ($database_connections as $connection => $configuration) {
