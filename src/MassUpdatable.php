@@ -30,9 +30,21 @@ trait MassUpdatable
             throw new EmptyUniqueByException();
         }
 
-        $quoteIfString = fn (mixed $value) => is_string($value)
-            ? $query->getGrammar()->quoteString($value)
-            : $value;
+        $quoteValue = function (mixed $value) use ($query) {
+            if (is_null($value)) {
+                return 'NULL';
+            }
+
+            if (is_bool($value)) {
+                return (int) $value;
+            }
+
+            if (is_numeric($value)) {
+                return $value;
+            }
+
+            return $query->getGrammar()->quoteString($value);
+        };
 
         $uniqueBy = Arr::wrap($uniqueBy ?? $this->getKeyName());
 
@@ -112,7 +124,7 @@ trait MassUpdatable
              * record.
              */
             foreach ($uniqueColumns as $column => $value) {
-                $preCompiledConditions[] = "{$query->getGrammar()->wrap($column)} = {$quoteIfString($value)}";
+                $preCompiledConditions[] = "{$query->getGrammar()->wrap($column)} = {$quoteValue($value)}";
 
                 if (! isset($whereIn[$column])) {
                     $whereIn[$column] = [$value];
@@ -137,7 +149,7 @@ trait MassUpdatable
                     throw new OrphanValueException($value);
                 }
 
-                $preCompiledAssociation = "WHEN $preCompiledConditions THEN {$quoteIfString($value)}";
+                $preCompiledAssociation = "WHEN $preCompiledConditions THEN {$quoteValue($value)}";
 
                 if (! isset($preCompiledUpdateStatements[$column])) {
                     $preCompiledUpdateStatements[$column] = [$preCompiledAssociation];

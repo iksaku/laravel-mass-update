@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string $name
+ * @property string $username
+ * @property string|null $name
+ * @property int $rank
+ * @property bool $can_code
  * @property Carbon $updated_at
  */
 class User extends Model
@@ -18,6 +21,11 @@ class User extends Model
     use MassUpdatable;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'rank' => 'int',
+        'can_code' => 'bool',
+    ];
 
     public function expenses(): HasMany
     {

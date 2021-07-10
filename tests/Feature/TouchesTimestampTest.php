@@ -3,6 +3,8 @@
 use Iksaku\Laravel\MassUpdate\Tests\App\Models\CustomUser;
 use Iksaku\Laravel\MassUpdate\Tests\App\Models\Expense;
 use Iksaku\Laravel\MassUpdate\Tests\App\Models\User;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 it('updates timestamps of touched records', function () {
     $this->travelTo(now()->subDay());
