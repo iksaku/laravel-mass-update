@@ -25,8 +25,7 @@ jobs:
         image: mysql:latest
         env:
           MYSQL_DATABASE: test
-          MYSQL_USER: root
-          MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
         ports:
           - 3306
       pgsql:
@@ -42,6 +41,9 @@ jobs:
         env:
           ACCEPT_EULA: Y
           SA_PASSWORD: Password!
+        options: >-
+          --name sqlsrv
+          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P Password!"
         ports:
           - 1433
 
