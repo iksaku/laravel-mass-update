@@ -27,17 +27,23 @@ jobs:
           MYSQL_DATABASE: test
           MYSQL_USER: root
           MYSQL_PASSWORD: password
+        ports:
+          - 3306
       pgsql:
         image: postgres:latest
         env:
           POSTGRES_DB: test
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
+        ports:
+          - 5432/tcp
       sqlsrv:
         image: mcr.microsoft.com/mssql/server:2019-latest
         env:
           ACCEPT_EULA: Y
           SA_PASSWORD: Password!
+        ports:
+          - 1433
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.database }} - ${{ matrix.stability }}
 
