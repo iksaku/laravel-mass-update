@@ -15,12 +15,32 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         php: [8.0]
         laravel: [8.*]
+        database: [sqlite, mysql, pgsql, sqlsrv]
         stability: [prefer-lowest, prefer-stable]
         include:
           - laravel: 8.*
             testbench: ^6.15
 
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_DATABASE: test
+          MYSQL_USER: root
+          MYSQL_PASSWORD: password
+      pgsql:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: password
+      sqlsrv:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: Password!
+
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -43,5 +63,11 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
+      - name: Setup Database
+        if: matrix.database == 'sqlsrv'
+        run: docker exec sqlsrv /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -U sa -P Password! -Q "create database [test]"
+
       - name: Execute tests
+        env:
+          DATABASE_CONNECTION: ${{ matrix.database }}
         run: vendor/bin/pest
