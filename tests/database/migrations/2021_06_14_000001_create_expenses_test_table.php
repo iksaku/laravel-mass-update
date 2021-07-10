@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateExpensesTestTable extends Migration
-{
+class CreateExpensesTestTable extends Migration {
     public function up(): void
     {
         Schema::create('expenses', function (Blueprint $table) {
