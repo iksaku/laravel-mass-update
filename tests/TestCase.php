@@ -38,6 +38,7 @@ class TestCase extends Orchestra
                 'password' => 'password',
             ],
             'sqlsrv' => [
+                'host' => '127.0.0.1',
                 'database' => 'test',
                 'username' => 'root',
                 'password' => 'Password!',

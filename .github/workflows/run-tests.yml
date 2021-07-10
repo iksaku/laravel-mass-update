@@ -36,7 +36,7 @@ jobs:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
         ports:
-          - 5432/tcp
+          - 5432
       sqlsrv:
         image: mcr.microsoft.com/mssql/server:2019-latest
         env:
