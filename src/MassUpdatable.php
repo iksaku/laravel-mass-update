@@ -36,7 +36,7 @@ trait MassUpdatable
             }
 
             if (is_bool($value)) {
-                return (int) $value;
+                return $value ? 'TRUE' : 'FALSE';
             }
 
             if (is_numeric($value)) {
