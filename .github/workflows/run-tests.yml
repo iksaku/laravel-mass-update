@@ -76,4 +76,5 @@ jobs:
       - name: Execute tests
         env:
           DATABASE_CONNECTION: ${{ matrix.database }}
+          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
         run: vendor/bin/pest

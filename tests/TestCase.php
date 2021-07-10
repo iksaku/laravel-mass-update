@@ -28,19 +28,18 @@ class TestCase extends Orchestra
                 'database' => ':memory:',
             ],
             'mysql' => [
-                'host' => 'mysql',
                 'database' => 'test',
                 'username' => 'root',
                 'password' => 'password',
             ],
             'pgsql' => [
-                'host' => 'pgsql',
+                'port' => env('POSTGRES_PORT', 5432),
                 'database' => 'test',
                 'username' => 'root',
                 'password' => 'password',
             ],
             'sqlsrv' => [
-                'host' => 'sqlsrv',
+                'host' => '127.0.0.1',
                 'database' => 'test',
                 'username' => 'root',
                 'password' => 'Password!',
