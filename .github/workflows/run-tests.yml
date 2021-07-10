@@ -10,7 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
       matrix:
         php: [8.0]
         laravel: [8.*]
