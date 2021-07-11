@@ -27,6 +27,11 @@ jobs:
           MYSQL_ROOT_PASSWORD: password
         ports:
           - 3306
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       pgsql:
         image: postgres:latest
         env:
@@ -35,6 +40,11 @@ jobs:
           POSTGRES_PASSWORD: password
         ports:
           - 5432/tcp
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       sqlsrv:
         image: mcr.microsoft.com/mssql/server:2019-latest
         env:
@@ -42,6 +52,10 @@ jobs:
           SA_PASSWORD: Password!
         options: >-
           --name sqlsrv
+          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P Password!"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - 1433
 
