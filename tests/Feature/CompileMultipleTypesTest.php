@@ -9,7 +9,7 @@ it('can compile NULL values', function () {
     DB::enableQueryLog();
 
     User::query()->massUpdate([
-        $user->fill(['name' => null])
+        $user->fill(['name' => null]),
     ]);
 
     expect(DB::getQueryLog()[0]['query'])->toContain('THEN NULL');
@@ -19,10 +19,10 @@ it('can compile NULL values', function () {
 
 it('can compile boolean values', function (bool $value) {
     $user = User::factory()->create([
-        'can_code' => !$value,
+        'can_code' => ! $value,
     ]);
 
-    expect($user->can_code)->toBe(!$value);
+    expect($user->can_code)->toBe(! $value);
 
     DB::enableQueryLog();
 
@@ -35,7 +35,7 @@ it('can compile boolean values', function (bool $value) {
     expect($user->refresh()->can_code)->toBe($value);
 })->with([
     true,
-    false
+    false,
 ]);
 
 it('can compile numeric values', function (int $rank, float $height) {
@@ -48,7 +48,7 @@ it('can compile numeric values', function (int $rank, float $height) {
     DB::enableQueryLog();
 
     User::query()->massUpdate([
-        $user->fill(compact('rank', 'height'))
+        $user->fill(compact('rank', 'height')),
     ]);
 
     expect(DB::getQueryLog()[0]['query'])->toContain('THEN 10', "THEN '1.7'");
@@ -59,8 +59,8 @@ it('can compile numeric values', function (int $rank, float $height) {
 })->with([
     [
         'rank' => 10,
-        'height' => 1.7
-    ]
+        'height' => 1.7,
+    ],
 ]);
 
 it('can compile strings', function (string $name) {
@@ -70,7 +70,7 @@ it('can compile strings', function (string $name) {
 
     DB::enableQueryLog();
     User::query()->massUpdate([
-        $user->fill(compact('name'))
+        $user->fill(compact('name')),
     ]);
 
     expect($user->refresh()->name)->toBe($name);
@@ -78,5 +78,5 @@ it('can compile strings', function (string $name) {
     'simple string' => 'Jorge González',
     'single quoted string' => "Jorge 'iksaku' González",
     'double quoted string' => 'Jorge "iksaku" González',
-    'complex string' => '"\'Jorge \"\\\'iksaku\\\'\" González\'"'
+    'complex string' => '"\'Jorge \"\\\'iksaku\\\'\" González\'"',
 ]);
