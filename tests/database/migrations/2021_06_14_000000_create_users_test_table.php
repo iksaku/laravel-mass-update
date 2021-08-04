@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->string('username');
             $table->string('name')->nullable();
             $table->unsignedTinyInteger('rank')->nullable();
+            $table->unsignedDecimal('height')->nullable();
             $table->boolean('can_code')->default(false);
 
             $table->timestamps();

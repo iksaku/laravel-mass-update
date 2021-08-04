@@ -24,6 +24,7 @@ class User extends Model
 
     protected $casts = [
         'rank' => 'int',
+        'height' => 'float',
         'can_code' => 'bool',
     ];
 

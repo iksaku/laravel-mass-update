@@ -39,11 +39,11 @@ trait MassUpdatable
                 return (int) $value;
             }
 
-            if (is_numeric($value)) {
+            if (is_integer($value)) {
                 return $value;
             }
 
-            return $query->getGrammar()->quoteString($value);
+            return $query->getConnection()->getPdo()->quote($value);
         };
 
         $uniqueBy = Arr::wrap($uniqueBy ?? $this->getKeyName());
@@ -197,9 +197,9 @@ trait MassUpdatable
 
                 return [
                     $column => DB::raw(<<<SQL
-                        CASE $conditions
-                        ELSE {$query->getGrammar()->wrap($column)}
-                        END
+                    CASE $conditions
+                    ELSE {$query->getGrammar()->wrap($column)}
+                    END
                     SQL),
                 ];
             })
