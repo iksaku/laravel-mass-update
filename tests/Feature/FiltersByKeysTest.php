@@ -74,3 +74,73 @@ it('can use multiple filter columns', function () {
         ->toContain('id')
         ->toContain('name');
 });
+
+it('can specify custom mass-update key', function () {
+    $customKeyUser = new class extends User {
+        protected $table = 'users';
+
+        public function getMassUpdateKeyName(): string|array|null
+        {
+            return 'username';
+        }
+    };
+
+    User::factory()->createMany([
+        ['username' => 'iksaku', 'name' => 'Jorge Gonzalez'],
+        ['username' => 'gm_mtz', 'name' => 'Gladys Martines'],
+    ]);
+
+    DB::enableQueryLog();
+
+    $customKeyUser::query()->massUpdate(
+        values: [
+            ['username' => 'iksaku', 'name' => 'Jorge González'],
+            ['username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
+        ]
+    );
+
+    expect(User::all())->sequence(
+        fn ($user) => $user->name->toEqual('Jorge González'),
+        fn ($user) => $user->name->toEqual('Gladys Martínez'),
+    );
+
+    expect(Arr::first(DB::getQueryLog())['query'])
+        ->toContain('username')
+        ->toContain('name')
+        ->not->toContain('id');
+});
+
+it('can specify multiple custom mass-update keys', function () {
+    $customKeyUser = new class extends User {
+        protected $table = 'users';
+
+        public function getMassUpdateKeyName(): string|array|null
+        {
+            return ['id', 'username'];
+        }
+    };
+
+    User::factory()->createMany([
+        ['username' => 'iksaku', 'name' => 'Jorge Gonzalez'],
+        ['username' => 'gm_mtz', 'name' => 'Gladys Martines'],
+    ]);
+
+    DB::enableQueryLog();
+
+    $customKeyUser::query()->massUpdate(
+        values: [
+            ['id' => 1, 'username' => 'iksaku', 'name' => 'Jorge González'],
+            ['id' => 2, 'username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
+        ]
+    );
+
+    expect(User::all())->sequence(
+        fn ($user) => $user->name->toEqual('Jorge González'),
+        fn ($user) => $user->name->toEqual('Gladys Martínez'),
+    );
+
+    expect(Arr::first(DB::getQueryLog())['query'])
+        ->toContain('id')
+        ->toContain('username')
+        ->toContain('name');
+});

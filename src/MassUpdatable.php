@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\DB;
  */
 trait MassUpdatable
 {
+    public function getMassUpdateKeyName(): string|array|null
+    {
+        return $this->getKeyName();
+    }
+
     public function scopeMassUpdate(Builder $query, array | Arrayable $values, array | string | null $uniqueBy = null): int
     {
         if (empty($values)) {
@@ -39,14 +44,14 @@ trait MassUpdatable
                 return (int) $value;
             }
 
-            if (is_integer($value)) {
+            if (is_int($value)) {
                 return $value;
             }
 
             return $query->getConnection()->getPdo()->quote($value);
         };
 
-        $uniqueBy = Arr::wrap($uniqueBy ?? $this->getKeyName());
+        $uniqueBy = Arr::wrap($uniqueBy ?? $this->getMassUpdateKeyName());
 
         /*
          * Values per row to use as a query filter.
