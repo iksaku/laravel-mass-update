@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-batch-update` will be documented in this file.
 
+## 1.0.3 - 2021-08-05
+
+- [19f01cd](https://github.com/iksaku/laravel-mass-update/commit/19f01cd2a3ec441d741189aedeaa6e5834b65408) Ability to define mass-update unique keys inside Model.
+
 ## 1.0.2 - 2021-08-05
 
 - [26946f6](https://github.com/iksaku/laravel-mass-update/commit/26946f66b3930af097052f85a06933f7b301f3e9) Fix value quoting with complex-quoted strings and float values.
