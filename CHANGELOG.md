@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-batch-update` will be documented in this file.
 
+## 1.0.4 - 2022-01-21
+
+- [bbfb4ac](https://github.com/iksaku/laravel-mass-update/commit/bbfb4ac773b7131dd2f541f1a9fefc9a78ad357d) Added support for upcoming Laravel 9 release :tada:
+
 ## 1.0.3 - 2021-08-05
 
 - [19f01cd](https://github.com/iksaku/laravel-mass-update/commit/19f01cd2a3ec441d741189aedeaa6e5834b65408) Ability to define mass-update unique keys inside Model.
