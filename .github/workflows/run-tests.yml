@@ -10,19 +10,58 @@ on:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest]
         php: [8.0]
         laravel: [8.*]
+        database: [sqlite, mysql, pgsql, sqlsrv]
         stability: [prefer-lowest, prefer-stable]
         include:
           - laravel: 8.*
             testbench: ^6.15
 
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: test
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      pgsql:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      sqlsrv:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: Password!
+        options: >-
+          --name sqlsrv
+          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P Password!"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 1433
+
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.database }} - ${{ matrix.stability }}
 
     steps:
       - name: Checkout code
@@ -32,7 +71,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_${{ matrix.database }}, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: none
 
       - name: Setup problem matchers
@@ -45,5 +84,14 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
+      - name: Setup Database
+        if: matrix.database == 'sqlsrv'
+        run: docker exec sqlsrv /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -U sa -P Password! -Q "create database [test]"
+
       - name: Execute tests
+        env:
+          DATABASE_CONNECTION: ${{ matrix.database }}
+          MYSQL_PORT: ${{ job.services.mysql.ports[5432] }}
+          PGSQL_PORT: ${{ job.services.pgsql.ports[5432] }}
+          SQLSRV_PORT: ${{ job.services.sqlsrv.ports[5432] }}
         run: vendor/bin/pest
