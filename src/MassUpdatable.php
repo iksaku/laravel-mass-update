@@ -221,4 +221,13 @@ trait MassUpdatable
          */
         return $query->update($compiledUpdateStatements);
     }
+
+    public function scopeMassUpdateQuietly(Builder $query, array | Arrayable $values, array | string | null $uniqueBy = null): int
+    {
+        $this->timestamps = false;
+
+        return tap($query->massUpdate($values, $uniqueBy), function () {
+            $this->timestamps = true;
+        });
+    }
 }
