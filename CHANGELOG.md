@@ -1,6 +1,12 @@
 # Changelog
 
-All notable changes to `laravel-batch-update` will be documented in this file.
+All notable changes to `laravel-mass-update` will be documented in this file.
+
+## 1.0.5 - 2023-02-02
+
+- [d4c4013](https://github.com/iksaku/laravel-mass-update/commit/d4c4013dcb64b4129e86739a66f87b9e860a7e10) Fix shields
+- [2a4fe97](https://github.com/iksaku/laravel-mass-update/commit/2a4fe975ecaa72a2c070da9a76860f61c7cb2001) Adds ability to prevent updated_at timestamp ([#6](https://github.com/iksaku/laravel-mass-update/pull/6)) 
+- [88d2c88](https://github.com/iksaku/laravel-mass-update/commit/88d2c88ac6400a43bbf9deabb31e260c20ab9955) Laravel 10.x Compatibility ([#7](https://github.com/iksaku/laravel-mass-update/pull/7))
 
 ## 1.0.4 - 2022-01-21
 
