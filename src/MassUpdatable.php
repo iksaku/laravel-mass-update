@@ -10,6 +10,7 @@ use Iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutFilterableColumnsException
 use Iksaku\Laravel\MassUpdate\Exceptions\RecordWithoutUpdatableValuesException;
 use Iksaku\Laravel\MassUpdate\Exceptions\UnexpectedModelClassException;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -46,6 +47,18 @@ trait MassUpdatable
 
             if (is_int($value)) {
                 return $value;
+            }
+
+            if ($value instanceof Arrayable) {
+                $value = $value->toArray();
+            }
+
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+
+            if ($value instanceof Jsonable) {
+                $value = $value->toJson();
             }
 
             return $query->getConnection()->getPdo()->quote($value);
