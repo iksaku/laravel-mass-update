@@ -50,6 +50,10 @@ trait MassUpdatable
                 return $value;
             }
 
+            if ($value instanceof Expression) {
+                return $value->getValue($query->getGrammar());
+            }
+
             if ($value instanceof Arrayable) {
                 $value = $value->toArray();
             }
@@ -60,10 +64,6 @@ trait MassUpdatable
 
             if ($value instanceof Jsonable) {
                 $value = $value->toJson();
-            }
-
-            if ($value instanceof Expression) {
-                $value = $value->getValue($query->getGrammar());
             }
 
             return $query->getConnection()->getPdo()->quote($value);
