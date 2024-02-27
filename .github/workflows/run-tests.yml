@@ -22,14 +22,17 @@ jobs:
         laravel: ['8.*', '9.*', '10.*', '11.*']
         stability: [prefer-lowest, prefer-stable]
         include:
-          - laravel: 10.*
-            testbench: 8.*
+          - laravel: 8.*
+            testbench: ^6.15
             carbon: ^2.63
           - laravel: 9.*
             testbench: 7.*
             carbon: ^2.63
-          - laravel: 8.*
-            testbench: ^6.15
+          - laravel: 10.*
+            testbench: 8.*
+            carbon: ^2.63
+          - laravel: 11.*
+            testbench: 8.*
             carbon: ^2.63
         exclude:
           - laravel: 10.*
