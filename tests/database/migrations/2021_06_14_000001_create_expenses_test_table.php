@@ -14,7 +14,7 @@ class CreateExpensesTestTable extends Migration
             $table->unsignedInteger('year');
             $table->string('quarter', 2);
 
-            $table->unsignedDecimal('total');
+            $table->decimal('total')->unsigned();
 
             $table->foreignId('user_id')
                 ->constrained()
