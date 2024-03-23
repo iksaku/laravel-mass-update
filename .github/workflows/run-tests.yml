@@ -32,7 +32,7 @@ jobs:
             carbon: ^2.63
           - laravel: 11.*
             testbench: 9.*
-            carbon: ^2.72.2
+            carbon: ^2.63
         exclude:
           - laravel: 10.*
             php: 8.0
