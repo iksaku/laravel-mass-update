@@ -14,6 +14,7 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Enumerable;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -21,18 +22,18 @@ use Illuminate\Support\Facades\DB;
  */
 trait MassUpdatable
 {
-    public function getMassUpdateKeyName(): string|array|null
+    public function getMassUpdateKeyName(): array|string|null
     {
         return $this->getKeyName();
     }
 
-    public function scopeMassUpdate(Builder $query, array|Arrayable $values, array|string|null $uniqueBy = null): int
+    public function scopeMassUpdate(Builder $query, array|Enumerable $values, array|string|null $uniqueBy = null): int
     {
-        if (empty($values)) {
+        if (blank($values)) {
             return 0;
         }
 
-        if ($uniqueBy !== null && empty($uniqueBy)) {
+        if ($uniqueBy !== null && blank($uniqueBy)) {
             throw new EmptyUniqueByException;
         }
 
