@@ -2,8 +2,6 @@ name: Run Tests
 
 on:
   push:
-    branches:
-      - main
     paths:
       - '**.php'
       - '.github/workflows/run-tests.yml'
@@ -11,8 +9,6 @@ on:
       - 'composer.json'
       - 'composer.lock'
   pull_request:
-    branches:
-      - main
     paths:
       - '**.php'
       - '.github/workflows/run-tests.yml'
