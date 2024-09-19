@@ -15,7 +15,7 @@ class ExpenseFactory extends Factory
         return [
             'user_id' => User::factory(),
             'year' => $this->faker->year(),
-            'quarter' => 'Q' . $this->faker->numberBetween(0, 4),
+            'quarter' => 'Q'.$this->faker->numberBetween(0, 4),
             'total' => $this->faker->randomFloat(2, 10, 100),
         ];
     }

@@ -7,7 +7,7 @@ use UnexpectedValueException;
 
 class RecordWithoutUpdatableValuesException extends UnexpectedValueException
 {
-    public function __construct(Throwable $previous = null)
+    public function __construct(?Throwable $previous = null)
     {
         parent::__construct(
             'No updatable columns where found for the current record.',

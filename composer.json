@@ -16,14 +16,18 @@
         }
     ],
     "require": {
-        "php": "^8.0",
-        "illuminate/database": "^8.71|^9.0|^10.0|^11.0",
-        "illuminate/support": "^8.71|^9.0|^10.0|^11.0"
+        "php": "^8.1",
+        "illuminate/database": "^10.13|^11.0",
+        "illuminate/support": "^10.13|^11.0"
     },
     "require-dev": {
+        "larastan/larastan": "^2.0",
+        "laravel/pint": "^1.17",
         "orchestra/testbench": "^8.0|^9.0",
-        "pestphp/pest": "^1.19|^2.0",
-        "vimeo/psalm": "^4.18|^5.6"
+        "pestphp/pest": "^2.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^1.2",
+        "phpstan/phpstan-phpunit": "^1.4"
     },
     "autoload": {
         "psr-4": {
@@ -38,15 +42,12 @@
             "Iksaku\\Laravel\\MassUpdate\\Tests\\Database\\Factories\\": "tests/database/factories"
         }
     },
-    "scripts": {
-        "psalm": "vendor/bin/psalm",
-        "test": "vendor/bin/pest"
-    },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
             "composer/package-versions-deprecated": true,
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
         }
     },
     "minimum-stability": "dev",

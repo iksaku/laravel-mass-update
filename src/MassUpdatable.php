@@ -26,14 +26,14 @@ trait MassUpdatable
         return $this->getKeyName();
     }
 
-    public function scopeMassUpdate(Builder $query, array | Arrayable $values, array | string | null $uniqueBy = null): int
+    public function scopeMassUpdate(Builder $query, array|Arrayable $values, array|string|null $uniqueBy = null): int
     {
         if (empty($values)) {
             return 0;
         }
 
         if ($uniqueBy !== null && empty($uniqueBy)) {
-            throw new EmptyUniqueByException();
+            throw new EmptyUniqueByException;
         }
 
         $quoteValue = function (mixed $value) use ($query) {
@@ -119,11 +119,11 @@ trait MassUpdatable
             }
 
             if (empty($uniqueColumns)) {
-                throw new RecordWithoutFilterableColumnsException();
+                throw new RecordWithoutFilterableColumnsException;
             }
 
             if (empty($updatableColumns)) {
-                throw new RecordWithoutUpdatableValuesException();
+                throw new RecordWithoutUpdatableValuesException;
             }
 
             if (count($missingColumns = array_diff_key($intersectionColumns, $uniqueColumns)) > 0) {
@@ -235,7 +235,7 @@ trait MassUpdatable
         return $query->update($compiledUpdateStatements);
     }
 
-    public function scopeMassUpdateQuietly(Builder $query, array | Arrayable $values, array | string | null $uniqueBy = null): int
+    public function scopeMassUpdateQuietly(Builder $query, array|Arrayable $values, array|string|null $uniqueBy = null): int
     {
         $this->timestamps = false;
 

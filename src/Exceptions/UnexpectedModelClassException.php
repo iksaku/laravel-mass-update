@@ -7,7 +7,7 @@ use UnexpectedValueException;
 
 class UnexpectedModelClassException extends UnexpectedValueException
 {
-    public function __construct(string $expectedClass, string $impostorClass, Throwable $previous = null)
+    public function __construct(string $expectedClass, string $impostorClass, ?Throwable $previous = null)
     {
         parent::__construct(
             "Expected an array of [{$expectedClass}] model instances. Found an instance of [{$impostorClass}].",
