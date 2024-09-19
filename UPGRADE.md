@@ -12,4 +12,9 @@ however, proper casting was never implemented for the latter.
 To better reflect the internal requirements, the `$values` parameter is now required to be an instance of `array` or
 [`Enumerable`](https://github.com/laravel/framework/blob/v10.13.0/src/Illuminate/Collections/Enumerable.php).
 
+### Removed `Model::massUpdateQuietly()` method
 
+Instead, use Laravel's `Model::withoutTimestamps()` method:
+```php
+User::withoutTimestamps(fn () => User::query()->massUpdate(...))
+```

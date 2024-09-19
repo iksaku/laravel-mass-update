@@ -19,10 +19,12 @@ it('does not update timestamp of touched records without events', function () {
 
     DB::enableQueryLog();
 
-    User::query()->massUpdateQuietly([
-        ['id' => 1, 'name' => 'Jorge González'],
-        ['id' => 2, 'name' => 'Gladys Martínez'],
-    ]);
+    User::withoutTimestamps(function () {
+        User::query()->massUpdate([
+            ['id' => 1, 'name' => 'Jorge González'],
+            ['id' => 2, 'name' => 'Gladys Martínez'],
+        ]);
+    });
 
     expect(
         User::query()->where('updated_at', '>=', now()->startOfDay())->count()
@@ -48,10 +50,12 @@ it('does not update custom timestamp column of touched records without events', 
 
     DB::enableQueryLog();
 
-    CustomUser::query()->massUpdateQuietly([
-        ['id' => 1, 'name' => 'Jorge González'],
-        ['id' => 2, 'name' => 'Gladys Martínez'],
-    ]);
+    CustomUser::withoutTimestamps(function () {
+        CustomUser::query()->massUpdate([
+            ['id' => 1, 'name' => 'Jorge González'],
+            ['id' => 2, 'name' => 'Gladys Martínez'],
+        ]);
+    });
 
     expect(
         CustomUser::query()->where('custom_updated_at', '>=', now()->startOfDay())->count()
@@ -72,10 +76,12 @@ it('does not touch update timestamp if model does not use it even without events
 
     DB::enableQueryLog();
 
-    Expense::query()->massUpdateQuietly([
-        ['id' => 1, 'total' => 4],
-        ['id' => 2, 'total' => 20],
-    ]);
+    Expense::withoutTimestamps(function () {
+        Expense::query()->massUpdate([
+            ['id' => 1, 'total' => 4],
+            ['id' => 2, 'total' => 20],
+        ]);
+    });
 
     expect(Expense::all())->sequence(
         fn ($expense) => $expense->total->toBe(4.0),
