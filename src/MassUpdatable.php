@@ -37,18 +37,6 @@ trait MassUpdatable
         }
 
         $quoteValue = function (mixed $value) use ($query) {
-            if (is_null($value)) {
-                return 'NULL';
-            }
-
-            if (is_bool($value)) {
-                return (int) $value;
-            }
-
-            if (is_int($value)) {
-                return $value;
-            }
-
             if ($value instanceof Arrayable) {
                 $value = $value->toArray();
             }
@@ -61,7 +49,7 @@ trait MassUpdatable
                 $value = $value->toJson();
             }
 
-            return $query->getConnection()->getPdo()->quote($value);
+            return $query->getGrammar()->escape($value);
         };
 
         $uniqueBy = Arr::wrap($uniqueBy ?? $this->getMassUpdateKeyName());

@@ -12,7 +12,7 @@ it('can compile NULL values', function () {
         $user->fill(['name' => null]),
     ]);
 
-    expect(DB::getQueryLog()[0]['query'])->toContain('THEN NULL');
+    expect(DB::getQueryLog()[0]['query'])->toContain('THEN null');
 
     expect($user->refresh()->name)->toBeNull();
 });
@@ -51,7 +51,7 @@ it('can compile numeric values', function (int $rank, float $height) {
         $user->fill(compact('rank', 'height')),
     ]);
 
-    expect(DB::getQueryLog()[0]['query'])->toContain('THEN 10', "THEN '1.7'");
+    expect(DB::getQueryLog()[0]['query'])->toContain('THEN 10', 'THEN 1.7');
 
     expect($user->refresh())
         ->rank->toBe($rank)
