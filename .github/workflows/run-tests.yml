@@ -28,10 +28,24 @@ jobs:
         php: [8.3, 8.2, 8.1]
         laravel: ['10.*', '11.*']
         stability: [lowest, highest]
-        database: [sqlite]
+        database: [sqlite, mysql]
         exclude:
           - laravel: 11.*
             php: 8.1
+
+    services:
+      mysql:
+        image: ${{ matrix.database == 'mysql' && 'mysql:5.7' || '' }}
+        env:
+          MYSQL_DATABASE: test
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     name: "P${{ matrix.php }} - L${{ matrix.laravel }} - S: ${{ matrix.stability }} | ${{ matrix.database }}"
 
