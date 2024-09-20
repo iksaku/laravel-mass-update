@@ -23,6 +23,8 @@ class TestCase extends Orchestra
     public function defineEnvironment($app): void
     {
         tap($app['config'], function (Repository $config) {
+            dump($config->get('database.connections'));
+
             $config->set('database.connections.sqlite.database', ':memory:');
         });
     }
