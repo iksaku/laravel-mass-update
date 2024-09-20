@@ -2,6 +2,7 @@
 
 namespace Iksaku\Laravel\MassUpdate\Tests;
 
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Orchestra\Testbench\TestCase as Orchestra;
@@ -19,14 +20,11 @@ class TestCase extends Orchestra
         );
     }
 
-    public function getEnvironmentSetUp($app)
+    public function defineEnvironment($app): void
     {
-        config()->set('database.default', 'testing');
-        config()->set('database.connections.testing', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
+        tap($app['config'], function (Repository $config) {
+            $config->set('database.connections.sqlite.database', ':memory:');
+        });
     }
 
     public function defineDatabaseMigrations()
