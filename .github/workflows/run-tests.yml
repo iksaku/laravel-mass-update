@@ -38,7 +38,7 @@ jobs:
         image: ${{ matrix.database == 'mysql' && 'mysql:5.7' || '' }}
         env:
           MYSQL_DATABASE: test
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_ROOT_PASSWORD: password
         ports:
           - 3306:3306
         options: >-
@@ -78,3 +78,6 @@ jobs:
         run: vendor/bin/pest
         env:
           DB_CONNECTION: ${{ matrix.database }}
+          DB_DATABASE: test
+          DB_USERNAME: root
+          DB_PASSWORD: password
