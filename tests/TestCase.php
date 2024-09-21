@@ -27,7 +27,7 @@ class TestCase extends Orchestra
         });
     }
 
-    public function defineDatabaseMigrations()
+    public function defineDatabaseMigrations(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
     }
