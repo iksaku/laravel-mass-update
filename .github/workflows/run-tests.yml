@@ -31,9 +31,19 @@ jobs:
         database:
           - connection: sqlite
           - connection: mysql
-            version: '5.7'
+            version: '8.0'
           - connection: mysql
-            version: 8
+            version: '8.4'
+          - connection: pgsql
+            version: 12
+          - connection: pgsql
+            version: 13
+          - connection: pgsql
+            version: 14
+          - connection: pgsql
+            version: 15
+          - connection: pgsql
+            version: 16
         exclude:
           - laravel: 11.*
             php: 8.1
@@ -48,6 +58,19 @@ jobs:
           - 3306:3306
         options: >-
           --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      postgres:
+        image: ${{ matrix.database.connection == 'pgsql' && format('postgres:{0}', matrix.database.version) || '' }}
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
