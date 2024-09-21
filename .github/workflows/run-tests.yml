@@ -28,14 +28,14 @@ jobs:
         php: [8.3, 8.2, 8.1]
         laravel: ['10.*', '11.*']
         stability: [lowest, highest]
-        database: [sqlite, mysql]
+        database: [sqlite, 'mysql:5.7', 'mysql:8']
         exclude:
           - laravel: 11.*
             php: 8.1
 
     services:
       mysql:
-        image: ${{ matrix.database == 'mysql' && 'mysql:5.7' || '' }}
+        image: ${{ startsWith(matrix.database, 'mysql') && matrix.database || '' }}
         env:
           MYSQL_DATABASE: test
           MYSQL_ROOT_PASSWORD: password
