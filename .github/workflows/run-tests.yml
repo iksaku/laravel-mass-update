@@ -28,19 +28,19 @@ jobs:
         php: [8.3, 8.2, 8.1]
         laravel: ['10.*', '11.*']
         stability: [lowest, highest]
-        database: [sqlite, mysql]
+        database:
+          - connection: sqlite
+          - connection: mysql
+            version: '5.7'
+          - connection: mysql
+            version: 8
         exclude:
           - laravel: 11.*
             php: 8.1
-        include:
-          - database_version: '5.7'
-            database: mysql
-          - database_version: 8
-            database: mysql
 
     services:
       mysql:
-        image: ${{ matrix.database == 'mysql' && format('mysql:{0}', matrix.database_version) || '' }}
+        image: ${{ matrix.database.connection == 'mysql' && format('mysql:{0}', matrix.database.version) || '' }}
         env:
           MYSQL_DATABASE: test
           MYSQL_ROOT_PASSWORD: password
@@ -52,7 +52,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    name: "P${{ matrix.php }} - L${{ matrix.laravel }} - S: ${{ matrix.stability }} | ${{ matrix.database }} ${{ matrix.database_version }}"
+    name: "P${{ matrix.php }} - L${{ matrix.laravel }} - S: ${{ matrix.stability }} | ${{ matrix.database.connection }} ${{ matrix.database.version }}"
 
     steps:
       - name: Checkout code
@@ -82,7 +82,7 @@ jobs:
       - name: Execute tests
         run: vendor/bin/pest
         env:
-          DB_CONNECTION: ${{ matrix.database }}
+          DB_CONNECTION: ${{ matrix.database.connection }}
           DB_DATABASE: test
           DB_USERNAME: root
           DB_PASSWORD: password
