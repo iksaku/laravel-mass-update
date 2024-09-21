@@ -24,6 +24,9 @@ class TestCase extends Orchestra
     {
         tap($app['config'], function (Repository $config) {
             $config->set('database.connections.sqlite.database', ':memory:');
+
+            // Fix collations
+            $config->set('database.connections.mysql.collation', 'utf8mb4_unicode_ci');
         });
     }
 
