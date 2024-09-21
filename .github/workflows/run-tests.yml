@@ -62,7 +62,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, zip, pdo, sqlite, pdo_sqlite, bcmath, fileinfo
           coverage: none
 
       - name: Setup problem matchers
