@@ -25,8 +25,13 @@ class TestCase extends Orchestra
         tap($app['config'], function (Repository $config) {
             $config->set('database.connections.sqlite.database', ':memory:');
 
+            if ($config->get('database.default') === 'mariadb' && ! $config->has('database.connections.mariadb')) {
+                $config->set('database.default', 'mysql');
+            }
+
             // Fix collations
             $config->set('database.connections.mysql.collation', 'utf8mb4_unicode_ci');
+            $config->set('database.connections.mariadb.collation', 'utf8mb4_unicode_ci');
         });
     }
 
