@@ -26,24 +26,24 @@ jobs:
       fail-fast: false
       matrix:
         php: [8.3, 8.2, 8.1]
-        laravel: ['10.*', '11.*']
-        stability: [lowest, highest]
+        laravel: ['11.*', '10.*']
+        stability: [highest, lowest]
         database:
           - connection: sqlite
           - connection: mysql
-            version: '8.0'
-          - connection: mysql
             version: '8.4'
+          - connection: mysql
+            version: '8.0'
           - connection: pgsql
-            version: 12
-          - connection: pgsql
-            version: 13
-          - connection: pgsql
-            version: 14
+            version: 16
           - connection: pgsql
             version: 15
           - connection: pgsql
-            version: 16
+            version: 14
+          - connection: pgsql
+            version: 13
+          - connection: pgsql
+            version: 12
         exclude:
           - laravel: 11.*
             php: 8.1
