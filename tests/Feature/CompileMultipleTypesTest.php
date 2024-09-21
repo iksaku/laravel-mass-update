@@ -30,7 +30,9 @@ it('can compile boolean values', function (bool $value) {
         $user->fill(['can_code' => $value]),
     ]);
 
-    expect(DB::getQueryLog()[0]['query'])->toContain("THEN $value");
+    $escaped = DB::escape($value);
+
+    expect(DB::getQueryLog()[0]['query'])->toContain("THEN $escaped");
 
     expect($user->refresh()->can_code)->toBe($value);
 })->with([

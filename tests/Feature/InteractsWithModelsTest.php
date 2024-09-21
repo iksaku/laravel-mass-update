@@ -19,14 +19,19 @@ it('can process array of changed models', function () {
 });
 
 it('skips models that have not changed', function () {
-    /** @var User[] $users */
     $users = User::factory()->count(2)->create();
 
-    $users[0]->name = 'Jorge';
+    $users[0]->fill([
+        'name' => 'Jorge',
+    ]);
+
+    $this->travelTo(now()->addSecond());
 
     expect(User::query()->massUpdate($users))->toBe(1);
 
-    expect(User::query()->first()->name)->toBe('Jorge');
+    expect(User::query()->where('updated_at', '>=', now())->count())->toBe(1);
+
+    expect(User::query()->orderBy('id')->first()->name)->toBe('Jorge');
 });
 
 it('skips query execution if there are no updates in given models', function () {
