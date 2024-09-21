@@ -53,7 +53,7 @@ trait MassUpdatable
                 $value = $value->toJson();
             }
 
-            return $query->getGrammar()->escape($value);
+            return $query->getConnection()->escape($value);
         };
 
         // From now on, this is going to be used to diff/intersect column keys in records.
