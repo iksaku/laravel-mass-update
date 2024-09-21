@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 it('does not update timestamp of touched records without events', function () {
     $this->travelTo(now()->subDay());
 
-    User::factory()->createMany([
+    [$jorge, $gladys] = User::factory()->createMany([
         ['name' => 'Jorge Gonzales'],
         ['name' => 'Gladys Martines'],
         ['name' => 'Elena González'],
@@ -19,10 +19,10 @@ it('does not update timestamp of touched records without events', function () {
 
     DB::enableQueryLog();
 
-    User::withoutTimestamps(function () {
+    User::withoutTimestamps(function () use ($jorge, $gladys) {
         User::query()->massUpdate([
-            ['id' => 1, 'name' => 'Jorge González'],
-            ['id' => 2, 'name' => 'Gladys Martínez'],
+            ['id' => $jorge->id, 'name' => 'Jorge González'],
+            ['id' => $gladys->id, 'name' => 'Gladys Martínez'],
         ]);
     });
 
@@ -40,7 +40,7 @@ it('does not update timestamp of touched records without events', function () {
 it('does not update custom timestamp column of touched records without events', function () {
     $this->travelTo(now()->subDay());
 
-    CustomUser::factory()->createMany([
+    [$jorge, $gladys] = CustomUser::factory()->createMany([
         ['name' => 'Jorge Gonzales'],
         ['name' => 'Gladys Martines'],
         ['name' => 'Elena González'],
@@ -50,10 +50,10 @@ it('does not update custom timestamp column of touched records without events', 
 
     DB::enableQueryLog();
 
-    CustomUser::withoutTimestamps(function () {
+    CustomUser::withoutTimestamps(function () use ($jorge, $gladys) {
         CustomUser::query()->massUpdate([
-            ['id' => 1, 'name' => 'Jorge González'],
-            ['id' => 2, 'name' => 'Gladys Martínez'],
+            ['id' => $jorge->id, 'name' => 'Jorge González'],
+            ['id' => $gladys->id, 'name' => 'Gladys Martínez'],
         ]);
     });
 
@@ -69,17 +69,17 @@ it('does not update custom timestamp column of touched records without events', 
 });
 
 it('does not touch update timestamp if model does not use it even without events', function () {
-    Expense::factory()->createMany([
+    [$a, $b] = Expense::factory()->createMany([
         ['total' => 20],
         ['total' => 4],
     ]);
 
     DB::enableQueryLog();
 
-    Expense::withoutTimestamps(function () {
+    Expense::withoutTimestamps(function () use ($a, $b) {
         Expense::query()->massUpdate([
-            ['id' => 1, 'total' => 4],
-            ['id' => 2, 'total' => 20],
+            ['id' => $a->id, 'total' => 4],
+            ['id' => $b->id, 'total' => 20],
         ]);
     });
 

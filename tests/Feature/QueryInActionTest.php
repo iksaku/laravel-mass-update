@@ -3,14 +3,14 @@
 use Iksaku\Laravel\MassUpdate\Tests\App\Models\User;
 
 it('updates multiple records in a single query', function () {
-    User::factory()->createMany([
+    [$jorge, $gladys] = User::factory()->createMany([
         ['name' => 'Jorge Gonzales'],
         ['name' => 'Gladys Martines'],
     ]);
 
     User::query()->massUpdate([
-        ['id' => 1, 'name' => 'Jorge González'],
-        ['id' => 2, 'name' => 'Gladys Martínez'],
+        ['id' => $jorge->id, 'name' => 'Jorge González'],
+        ['id' => $gladys->id, 'name' => 'Gladys Martínez'],
     ]);
 
     expect(User::all())->sequence(
@@ -20,32 +20,36 @@ it('updates multiple records in a single query', function () {
 });
 
 it('can chain other query statements', function () {
-    $this->travelTo(now()->startOfDay());
+    [$a, $b, $c, $d] = User::factory()
+        ->count(4)
+        ->sequence(
+            ['can_code' => true],
+            ['can_code' => false],
+        )
+        ->create();
 
-    User::factory()->count(10)->create();
-
-    $this->travelBack();
+    $this->travelTo(now()->addSecond());
 
     User::query()
-        ->where('id', '<', 5)
+        ->where('can_code', true)
         ->massUpdate([
-            ['id' => 1, 'name' => 'Updated User'],
-            ['id' => 4, 'name' => 'Another Updated User'],
-            ['id' => 5, 'name' => 'Ignored User'],
-            ['id' => 10, 'name' => 'Another Ignored User'],
+            ['id' => $a->id, 'name' => 'Updated User'],
+            ['id' => $b->id, 'name' => 'Ignored User'],
+            ['id' => $c->id, 'name' => 'Another Updated User'],
+            ['id' => $d->id, 'name' => 'Another Ignored User'],
         ]);
 
     expect(
-        User::query()->where('updated_at', '>', now()->startOfDay())->count()
+        User::query()->where('updated_at', '>=', now())->count()
     )->toBe(2);
 });
 
 it('can update multiple value types', function (string $attribute, mixed $value) {
-    User::factory()->create();
+    $user = User::factory()->create();
 
     User::query()->massUpdate(
         values: [[
-            'id' => 1,
+            'id' => $user->id,
             $attribute => $value,
         ]]
     );

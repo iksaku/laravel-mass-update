@@ -7,25 +7,23 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 it('updates timestamps of touched records', function () {
-    $this->travelTo(now()->subDay());
-
-    User::factory()->createMany([
+    [$jorge, $gladys] = User::factory()->createMany([
         ['name' => 'Jorge Gonzales'],
         ['name' => 'Gladys Martines'],
         ['name' => 'Elena González'],
     ]);
 
-    $this->travelBack();
+    $this->travelTo(now()->addSecond());
 
     DB::enableQueryLog();
 
     User::query()->massUpdate([
-        ['id' => 1, 'name' => 'Jorge González'],
-        ['id' => 2, 'name' => 'Gladys Martínez'],
+        ['id' => $jorge->id, 'name' => 'Jorge González'],
+        ['id' => $gladys->id, 'name' => 'Gladys Martínez'],
     ]);
 
     expect(
-        User::query()->where('updated_at', '>=', now()->startOfDay())->count()
+        User::query()->where('updated_at', '>=', now())->count()
     )->toBe(2);
 
     expect(
@@ -38,7 +36,7 @@ it('updates timestamps of touched records', function () {
 it('updates custom timestamp column of touched records', function () {
     $this->travelTo(now()->subDay());
 
-    CustomUser::factory()->createMany([
+    [$jorge, $gladys] = CustomUser::factory()->createMany([
         ['name' => 'Jorge Gonzales'],
         ['name' => 'Gladys Martines'],
         ['name' => 'Elena González'],
@@ -49,8 +47,8 @@ it('updates custom timestamp column of touched records', function () {
     DB::enableQueryLog();
 
     CustomUser::query()->massUpdate([
-        ['id' => 1, 'name' => 'Jorge González'],
-        ['id' => 2, 'name' => 'Gladys Martínez'],
+        ['id' => $jorge->id, 'name' => 'Jorge González'],
+        ['id' => $gladys->id, 'name' => 'Gladys Martínez'],
     ]);
 
     expect(
@@ -65,7 +63,7 @@ it('updates custom timestamp column of touched records', function () {
 });
 
 it('does not touch update timestamp if model does not use it', function () {
-    Expense::factory()->createMany([
+    [$a, $b] = Expense::factory()->createMany([
         ['total' => 20],
         ['total' => 4],
     ]);
@@ -73,8 +71,8 @@ it('does not touch update timestamp if model does not use it', function () {
     DB::enableQueryLog();
 
     Expense::query()->massUpdate([
-        ['id' => 1, 'total' => 4],
-        ['id' => 2, 'total' => 20],
+        ['id' => $a->id, 'total' => 4],
+        ['id' => $b->id, 'total' => 20],
     ]);
 
     expect(Expense::all())->sequence(

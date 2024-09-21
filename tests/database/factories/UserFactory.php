@@ -16,4 +16,11 @@ class UserFactory extends Factory
             'name' => $this->faker->name,
         ];
     }
+
+    public function canCode(bool $value = true): static
+    {
+        return $this->state([
+            'can_code' => $value,
+        ]);
+    }
 }

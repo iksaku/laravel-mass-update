@@ -5,7 +5,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 it('uses model\'s default key column if no other filtering columns are provided', function () {
-    User::factory()->createMany([
+    [$jorge, $gladys] = User::factory()->createMany([
         ['name' => 'Jorge Gonzales'],
         ['name' => 'Gladys Martines'],
     ]);
@@ -13,8 +13,8 @@ it('uses model\'s default key column if no other filtering columns are provided'
     DB::enableQueryLog();
 
     User::query()->massUpdate([
-        ['id' => 1, 'name' => 'Jorge González'],
-        ['id' => 2, 'name' => 'Gladys Martínez'],
+        ['id' => $jorge->id, 'name' => 'Jorge González'],
+        ['id' => $gladys->id, 'name' => 'Gladys Martínez'],
     ]);
 
     expect(User::all())->sequence(
@@ -50,7 +50,7 @@ it('can use a different filter column', function () {
 });
 
 it('can use multiple filter columns', function () {
-    User::factory()->createMany([
+    [$jorge, $gladys] = User::factory()->createMany([
         ['username' => 'iksaku', 'name' => 'Jorge Gonzalez'],
         ['username' => 'gm_mtz', 'name' => 'Gladys Martines'],
     ]);
@@ -59,8 +59,8 @@ it('can use multiple filter columns', function () {
 
     User::query()->massUpdate(
         values: [
-            ['id' => 1, 'username' => 'iksaku', 'name' => 'Jorge González'],
-            ['id' => 2, 'username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
+            ['id' => $jorge->id, 'username' => 'iksaku', 'name' => 'Jorge González'],
+            ['id' => $gladys->id, 'username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
         ],
         uniqueBy: ['id', 'username']
     );
@@ -122,7 +122,7 @@ it('can specify multiple custom mass-update keys', function () {
         }
     };
 
-    User::factory()->createMany([
+    [$jorge, $gladys] = User::factory()->createMany([
         ['username' => 'iksaku', 'name' => 'Jorge Gonzalez'],
         ['username' => 'gm_mtz', 'name' => 'Gladys Martines'],
     ]);
@@ -131,8 +131,8 @@ it('can specify multiple custom mass-update keys', function () {
 
     $customKeyUser::query()->massUpdate(
         values: [
-            ['id' => 1, 'username' => 'iksaku', 'name' => 'Jorge González'],
-            ['id' => 2, 'username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
+            ['id' => $jorge->id, 'username' => 'iksaku', 'name' => 'Jorge González'],
+            ['id' => $gladys->id, 'username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
         ]
     );
 
