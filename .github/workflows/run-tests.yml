@@ -30,10 +30,24 @@ jobs:
         stability: [highest, lowest]
         database:
           - connection: sqlite
+
+          # See: https://en.wikipedia.org/wiki/MySQL#Release_history
           - connection: mysql
             version: '8.4'
           - connection: mysql
             version: '8.0'
+
+          # See: https://mariadb.org/about/#maintenance-policy
+          - connection: mariadb
+            version: '11.4'
+          - connection: mariadb
+            version: '10.11'
+          - connection: mariadb
+            version: '10.6'
+          - connection: mariadb
+            version: '10.5'
+
+          # See: https://www.postgresql.org/support/versioning/
           - connection: pgsql
             version: 16
           - connection: pgsql
@@ -58,6 +72,18 @@ jobs:
           - 3306:3306
         options: >-
           --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mariadb:
+        image: ${{ matrix.database.connection == 'mariadb' && format('mariadb:{0}', matrix.database.version) || '' }}
+        env:
+          MARIADB_DATABASE: test
+          MARIADB_ROOT_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mariadb-admin ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
