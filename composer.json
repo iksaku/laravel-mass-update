@@ -23,7 +23,7 @@
     "require-dev": {
         "larastan/larastan": "^2.0",
         "laravel/pint": "^1.17",
-        "orchestra/testbench": "^8.5.6|^9.0",
+        "orchestra/testbench": "^8.22|^9.0",
         "pestphp/pest": "^2.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^1.2",
