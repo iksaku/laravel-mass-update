@@ -28,14 +28,19 @@ jobs:
         php: [8.3, 8.2, 8.1]
         laravel: ['10.*', '11.*']
         stability: [lowest, highest]
-        database: [sqlite, 'mysql:5.7', 'mysql:8']
+        database: [sqlite, mysql]
         exclude:
           - laravel: 11.*
             php: 8.1
+        include:
+          - database: mysql
+            database_version: 5.7
+          - database: mysql
+            database_version: 8
 
     services:
       mysql:
-        image: ${{ startsWith(matrix.database, 'mysql') && matrix.database || '' }}
+        image: ${{ matrix.database == 'mysql' && format('mysql:{0}', matrix.database_version) || '' }}
         env:
           MYSQL_DATABASE: test
           MYSQL_ROOT_PASSWORD: password
@@ -47,7 +52,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    name: "P${{ matrix.php }} - L${{ matrix.laravel }} - S: ${{ matrix.stability }} | ${{ matrix.database }}"
+    name: "P${{ matrix.php }} - L${{ matrix.laravel }} - S: ${{ matrix.stability }} | ${{ matrix.database }} ${{ matrix.database_version }}"
 
     steps:
       - name: Checkout code
