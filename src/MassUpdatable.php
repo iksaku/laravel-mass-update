@@ -12,6 +12,7 @@ use Iksaku\Laravel\MassUpdate\Exceptions\UnexpectedModelClassException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +48,10 @@ trait MassUpdatable
 
             if (is_int($value)) {
                 return $value;
+            }
+
+            if ($value instanceof Expression) {
+                return $value->getValue($query->getGrammar());
             }
 
             if ($value instanceof Arrayable) {
