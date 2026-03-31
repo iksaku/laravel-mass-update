@@ -26,9 +26,9 @@ uses(TestCase::class)->in('Feature');
 |
 */
 
-//expect()->extend('toBeOne', function () {
+// expect()->extend('toBeOne', function () {
 //    return $this->toBe(1);
-//});
+// });
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ uses(TestCase::class)->in('Feature');
 |
 */
 
-//function something()
-//{
+// function something()
+// {
 //    // ..
-//}
+// }
