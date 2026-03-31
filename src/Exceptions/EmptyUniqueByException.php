@@ -7,7 +7,7 @@ use UnexpectedValueException;
 
 class EmptyUniqueByException extends UnexpectedValueException
 {
-    public function __construct(Throwable $previous = null)
+    public function __construct(?Throwable $previous = null)
     {
         parent::__construct(
             'Second parameter expects an array of column names, used to properly filter your mass updatable values, but no names were given.',
