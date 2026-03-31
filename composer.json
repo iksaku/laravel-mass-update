@@ -24,7 +24,7 @@
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.17",
         "orchestra/testbench": "^9.0|^10.0",
-        "pestphp/pest": "^2.0",
+        "pestphp/pest": "^3.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0"
