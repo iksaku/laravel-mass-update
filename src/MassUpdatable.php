@@ -14,6 +14,7 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Enumerable;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -21,22 +22,25 @@ use Illuminate\Support\Facades\DB;
  */
 trait MassUpdatable
 {
-    public function getMassUpdateKeyName(): string|array|null
+    public function getMassUpdateKeyName(): array|string|null
     {
         return $this->getKeyName();
     }
 
-    public function scopeMassUpdate(Builder $query, array | Arrayable $values, array | string | null $uniqueBy = null): int
+    /**
+     * @return int The number of records updated in the Database
+     */
+    public function scopeMassUpdate(Builder $query, array|Enumerable $values, array|string|null $uniqueBy = null): int
     {
-        if (empty($values)) {
+        if (blank($values)) {
             return 0;
         }
 
-        if ($uniqueBy !== null && empty($uniqueBy)) {
-            throw new EmptyUniqueByException();
+        if ($uniqueBy !== null && blank($uniqueBy)) {
+            throw new EmptyUniqueByException;
         }
 
-        $quoteValue = function (mixed $value) use ($query) {
+        $escape = function (mixed $value) use ($query) {
             if ($value instanceof Arrayable) {
                 $value = $value->toArray();
             }
@@ -49,10 +53,11 @@ trait MassUpdatable
                 $value = $value->toJson();
             }
 
-            return $query->getGrammar()->escape($value);
+            return $query->getConnection()->escape($value);
         };
 
-        $uniqueBy = Arr::wrap($uniqueBy ?? $this->getMassUpdateKeyName());
+        // From now on, this is going to be used to diff/intersect column keys in records.
+        $uniqueBy = array_flip(Arr::wrap($uniqueBy ?? $this->getMassUpdateKeyName()));
 
         /*
          * Values per row to use as a query filter.
@@ -78,9 +83,6 @@ trait MassUpdatable
          */
         $preCompiledUpdateStatements = [];
 
-        // Cached column reference used to separate from each record's value.
-        $intersectionColumns = array_flip($uniqueBy);
-
         foreach ($values as $record) {
             if (empty($record)) {
                 continue;
@@ -95,26 +97,26 @@ trait MassUpdatable
                     continue;
                 }
 
-                $uniqueColumns = array_intersect_key($record->getAttributes(), $intersectionColumns);
-                $updatableColumns = $record->getDirty();
+                $uniqueAttributes = array_intersect_key($record->getAttributes(), $uniqueBy);
+                $updatableAttributes = $record->getDirty();
 
-                if (! empty($crossReferencedColumns = array_intersect_key($updatableColumns, $uniqueColumns))) {
+                if (! empty($crossReferencedColumns = array_intersect_key($updatableAttributes, $uniqueBy))) {
                     throw new MassUpdatingAndFilteringModelUsingTheSameColumn($crossReferencedColumns);
                 }
             } else {
-                $uniqueColumns = array_intersect_key($record, $intersectionColumns);
-                $updatableColumns = array_diff_key($record, $intersectionColumns);
+                $uniqueAttributes = array_intersect_key($record, $uniqueBy);
+                $updatableAttributes = array_diff_key($record, $uniqueBy);
             }
 
-            if (empty($uniqueColumns)) {
-                throw new RecordWithoutFilterableColumnsException();
+            if (empty($uniqueAttributes)) {
+                throw new RecordWithoutFilterableColumnsException;
             }
 
-            if (empty($updatableColumns)) {
-                throw new RecordWithoutUpdatableValuesException();
+            if (empty($updatableAttributes)) {
+                throw new RecordWithoutUpdatableValuesException;
             }
 
-            if (count($missingColumns = array_diff_key($intersectionColumns, $uniqueColumns)) > 0) {
+            if (count($missingColumns = array_diff_key($uniqueBy, $uniqueAttributes)) > 0) {
                 throw new MissingFilterableColumnsException(array_flip($missingColumns));
             }
 
@@ -129,14 +131,10 @@ trait MassUpdatable
              * the DB to properly assign the correct value to the correct
              * record.
              */
-            foreach ($uniqueColumns as $column => $value) {
-                $preCompiledConditions[] = "{$query->getGrammar()->wrap($column)} = {$quoteValue($value)}";
+            foreach ($uniqueAttributes as $column => $value) {
+                $preCompiledConditions[] = "{$query->getGrammar()->wrap($column)} = {$escape($value)}";
 
-                if (! isset($whereIn[$column])) {
-                    $whereIn[$column] = [$value];
-
-                    continue;
-                }
+                $whereIn[$column] ??= [];
 
                 if (! in_array($value, $whereIn[$column])) {
                     $whereIn[$column][] = $value;
@@ -150,18 +148,14 @@ trait MassUpdatable
              * These do not include the `unique columns`, so we will not
              * be updating those.
              */
-            foreach ($updatableColumns as $column => $value) {
+            foreach ($updatableAttributes as $column => $value) {
                 if (! is_string($column)) {
                     throw new OrphanValueException($value);
                 }
 
-                $preCompiledAssociation = "WHEN $preCompiledConditions THEN {$quoteValue($value)}";
+                $preCompiledAssociation = "WHEN $preCompiledConditions THEN {$escape($value)}";
 
-                if (! isset($preCompiledUpdateStatements[$column])) {
-                    $preCompiledUpdateStatements[$column] = [$preCompiledAssociation];
-
-                    continue;
-                }
+                $preCompiledUpdateStatements[$column] ??= [];
 
                 if (! in_array($preCompiledAssociation, $preCompiledUpdateStatements[$column])) {
                     $preCompiledUpdateStatements[$column][] = $preCompiledAssociation;
@@ -221,14 +215,5 @@ trait MassUpdatable
          * return the number of touched records.
          */
         return $query->update($compiledUpdateStatements);
-    }
-
-    public function scopeMassUpdateQuietly(Builder $query, array | Arrayable $values, array | string | null $uniqueBy = null): int
-    {
-        $this->timestamps = false;
-
-        return tap($query->massUpdate($values, $uniqueBy), function () {
-            $this->timestamps = true;
-        });
     }
 }

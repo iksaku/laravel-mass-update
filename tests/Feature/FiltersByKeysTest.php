@@ -35,9 +35,9 @@ it('can use a different filter column', function () {
 
     User::query()->massUpdate(
         values: [
-        ['username' => 'iksaku', 'name' => 'Jorge González'],
-        ['username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
-    ],
+            ['username' => 'iksaku', 'name' => 'Jorge González'],
+            ['username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
+        ],
         uniqueBy: 'username'
     );
 
@@ -59,9 +59,9 @@ it('can use multiple filter columns', function () {
 
     User::query()->massUpdate(
         values: [
-        ['id' => 1, 'username' => 'iksaku', 'name' => 'Jorge González'],
-        ['id' => 2, 'username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
-    ],
+            ['id' => 1, 'username' => 'iksaku', 'name' => 'Jorge González'],
+            ['id' => 2, 'username' => 'gm_mtz', 'name' => 'Gladys Martínez'],
+        ],
         uniqueBy: ['id', 'username']
     );
 
@@ -76,7 +76,8 @@ it('can use multiple filter columns', function () {
 });
 
 it('can specify custom mass-update key', function () {
-    $customKeyUser = new class extends User {
+    $customKeyUser = new class extends User
+    {
         protected $table = 'users';
 
         public function getMassUpdateKeyName(): string|array|null
@@ -111,7 +112,8 @@ it('can specify custom mass-update key', function () {
 });
 
 it('can specify multiple custom mass-update keys', function () {
-    $customKeyUser = new class extends User {
+    $customKeyUser = new class extends User
+    {
         protected $table = 'users';
 
         public function getMassUpdateKeyName(): string|array|null
