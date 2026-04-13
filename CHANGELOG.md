@@ -2,10 +2,18 @@
 
 All notable changes to `laravel-mass-update` will be documented in this file.
 
+## v2.0.0 - 2026-04-13
+
+### What's Changed
+
+* Laravel 13.x Compatibility by @laravel-shift in https://github.com/iksaku/laravel-mass-update/pull/19
+
+**Full Changelog**: https://github.com/iksaku/laravel-mass-update/compare/1.0.9...2.0.0
+
 ## 1.0.5 - 2023-02-02
 
 - [d4c4013](https://github.com/iksaku/laravel-mass-update/commit/d4c4013dcb64b4129e86739a66f87b9e860a7e10) Fix shields
-- [2a4fe97](https://github.com/iksaku/laravel-mass-update/commit/2a4fe975ecaa72a2c070da9a76860f61c7cb2001) Adds ability to prevent updated_at timestamp ([#6](https://github.com/iksaku/laravel-mass-update/pull/6)) 
+- [2a4fe97](https://github.com/iksaku/laravel-mass-update/commit/2a4fe975ecaa72a2c070da9a76860f61c7cb2001) Adds ability to prevent updated_at timestamp ([#6](https://github.com/iksaku/laravel-mass-update/pull/6))
 - [88d2c88](https://github.com/iksaku/laravel-mass-update/commit/88d2c88ac6400a43bbf9deabb31e260c20ab9955) Laravel 10.x Compatibility ([#7](https://github.com/iksaku/laravel-mass-update/pull/7))
 
 ## 1.0.4 - 2022-01-21
