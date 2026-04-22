@@ -8,6 +8,9 @@ All notable changes to `laravel-mass-update` will be documented in this file.
 
 * Laravel 13.x Compatibility by @laravel-shift in https://github.com/iksaku/laravel-mass-update/pull/19
 
+### Breaking Changes
+* The `Mode::massUpdateQuietly()` method has been removed in favor of Laravel's built-in `Model::withoutTimestamps()` method. [Learn more](https://laravel.com/docs/11.x/eloquent#timestamps)
+
 **Full Changelog**: https://github.com/iksaku/laravel-mass-update/compare/1.0.9...2.0.0
 
 ## 1.0.5 - 2023-02-02
